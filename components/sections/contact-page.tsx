@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     question: "Are the practice tests similar to the real CELPIP test?",
-    answer: "Our practice tests are designed to mirror the format and difficulty of the actual CELPIP test. However, we are not affiliated with CELPIP, so these are practice materials only.",
+    answer: "Our practice exercises follow the CELPIP test format to help you prepare. However, we are not affiliated with CELPIP, and these are sample practice materials only, not official test questions.",
   },
   {
     question: "When will full mock tests be available?",
@@ -60,7 +60,7 @@ export function ContactPage() {
   }
 
   return (
-    <div className="container mx-auto container-padding py-12 md:py-16">
+    <div className="container mx-auto container-padding py-10 md:py-14">
       <motion.div
         className="text-center mb-12 md:mb-16"
         initial={sectionHeader.initial}
@@ -86,8 +86,8 @@ export function ContactPage() {
             <CardContent>
               {isSubmitted ? (
                 <div className="text-center py-8">
-                  <div className="h-14 w-14 rounded-xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-md">
-                    <CheckCircle2 className="h-7 w-7 text-white" />
+                  <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-sm">
+                    <CheckCircle2 className="h-6 w-6 text-white" />
                   </div>
                   <p className="text-base font-semibold mb-1.5 text-gradient-primary">Message Sent!</p>
                   <p className="text-sm text-muted-foreground leading-relaxed">

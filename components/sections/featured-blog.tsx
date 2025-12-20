@@ -42,14 +42,14 @@ export function FeaturedBlog() {
     <section ref={ref} className="section-padding bg-muted/30">
       <div className="container mx-auto container-padding">
         <motion.div
-          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4"
+          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
         >
           <div>
             <h2 className="heading-2 mb-2 text-gradient-primary">Latest Study Tips</h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Expert advice to help you excel on your CELPIP test.
             </p>
           </div>
@@ -61,7 +61,7 @@ export function FeaturedBlog() {
           </Button>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {featuredPosts.map((post, index) => (
             <motion.div
               key={post.slug}
@@ -71,7 +71,7 @@ export function FeaturedBlog() {
             >
               <Card className="card-hover h-full flex flex-col card-elevated">
                 <CardHeader className="pb-3">
-                  <div className="inline-block px-2.5 py-1 rounded-md text-xs font-semibold gradient-primary text-white mb-2.5 shadow-sm">
+                  <div className="inline-block px-2 py-0.5 rounded-md text-xs font-semibold gradient-primary text-white mb-2.5 shadow-sm">
                     {post.category}
                   </div>
                   <CardTitle className="text-base font-semibold mb-1.5 leading-tight">
@@ -87,7 +87,7 @@ export function FeaturedBlog() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="mt-auto pt-0">
-                  <div className="flex items-center justify-between pt-3 border-t">
+                  <div className="flex items-center justify-between pt-3 border-t border-border/50">
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Clock className="h-3.5 w-3.5" />
                       <span>{post.readingTime} min</span>

@@ -40,8 +40,8 @@ export function BlogCard({ post, priority = false }: BlogCardProps) {
         </div>
       </div>
 
-      <CardHeader className="pb-3 flex-1 px-5 pt-5">
-        <CardTitle className="text-base font-semibold mb-2.5 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+      <CardHeader className="pb-3 flex-1">
+        <CardTitle className="text-base font-semibold mb-2 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
           <Link
             href={`/blog/${post.slug}`}
             className="hover:text-primary transition-colors"
@@ -54,7 +54,7 @@ export function BlogCard({ post, priority = false }: BlogCardProps) {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="pt-0 px-5 pb-5 space-y-3">
+      <CardContent className="pt-0 space-y-2.5">
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Clock className="h-3.5 w-3.5 opacity-70" />

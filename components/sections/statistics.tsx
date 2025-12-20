@@ -27,8 +27,8 @@ const stats = [
     color: "gradient-reading",
   },
   {
-    number: "100%",
-    label: "Free Forever",
+    number: "4",
+    label: "Test Sections",
     icon: Award,
     color: "gradient-writing",
   },
@@ -42,18 +42,18 @@ export function Statistics() {
     <section ref={ref} className="section-padding bg-muted/30">
       <div className="container mx-auto container-padding">
         <motion.div
-          className="text-center mb-10"
+          className="text-center mb-8"
           initial={sectionHeader.initial}
           animate={isInView ? sectionHeader.animate : sectionHeader.initial}
           transition={sectionHeader.transition}
         >
-          <h2 className="heading-2 mb-3 text-gradient-primary">Trusted by Thousands</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <h2 className="heading-2 mb-2 text-gradient-primary">Trusted by Thousands</h2>
+          <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Join a growing community of students achieving their CELPIP goals
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {stats.map((stat, index) => {
             const Icon = stat.icon
             return (
@@ -64,8 +64,8 @@ export function Statistics() {
                 transition={cardItem(index).transition}
               >
                 <Card className="stat-card">
-                  <CardContent className="p-5">
-                    <div className={`mx-auto mb-3 h-10 w-10 rounded-lg ${stat.color} flex items-center justify-center shadow-md`}>
+                  <CardContent className="p-4">
+                    <div className={`mx-auto mb-3 h-9 w-9 rounded-lg ${stat.color} flex items-center justify-center shadow-sm`}>
                       <Icon className="h-5 w-5 text-white" />
                     </div>
                     <div className="stat-card-number">{stat.number}</div>

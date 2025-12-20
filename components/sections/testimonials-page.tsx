@@ -14,7 +14,7 @@ const testimonials = [
     location: "Toronto, Canada",
     score: "CLB 9",
     improvement: "+2 points",
-    text: "FreeCELPIPTest helped me achieve my target score! The practice tests were incredibly realistic and the study tips were invaluable. I went from CLB 7 to CLB 9 in just 2 months of practice.",
+    text: "FreeCELPIPTest helped me prepare effectively! The practice exercises and study tips were very helpful for my test preparation.",
     rating: 5,
     image: "/placeholder-avatar.png",
   },
@@ -70,7 +70,7 @@ export function TestimonialsPage() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <div className="container mx-auto container-padding py-12 md:py-16">
+    <div className="container mx-auto container-padding py-10 md:py-14">
       <motion.div
         className="text-center mb-12 md:mb-16"
         initial={sectionHeader.initial}
@@ -92,7 +92,7 @@ export function TestimonialsPage() {
             transition={cardItem(index).transition}
           >
             <Card className="card-hover h-full card-elevated">
-              <CardContent className="p-6 md:p-8">
+              <CardContent className="p-5">
                 <div className="flex items-center gap-1 mb-5">
                   {Array.from({ length: testimonial.rating }).map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
@@ -139,7 +139,7 @@ export function TestimonialsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ delay: 0.6, duration: 0.6 }}
-        className="card-modern rounded-xl p-8 text-center"
+        className="card-modern rounded-xl p-6 text-center"
       >
         <h2 className="text-2xl font-bold mb-4">Share Your Success Story</h2>
         <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">

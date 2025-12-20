@@ -12,7 +12,7 @@ export function BlogPostStructuredData({ post }: StructuredDataProps) {
     description: post.excerpt,
     image: post.featuredImage || "https://freecelpiptest.com/og-image.jpg",
     datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
     author: {
       "@type": "Organization",
       name: "FreeCELPIPTest",

@@ -54,10 +54,11 @@ cp .env.example .env
 
 Edit `.env` and add your:
 - `DATABASE_URL` - PostgreSQL connection string
-- `NEXTAUTH_URL` - Your app URL (http://localhost:3000 for local)
-- `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
-- `GOOGLE_CLIENT_ID` - From Google Cloud Console
-- `GOOGLE_CLIENT_SECRET` - From Google Cloud Console
+- `NEXTAUTH_URL` or `AUTH_URL` - Your app URL (http://localhost:3000 for local)
+- `NEXTAUTH_SECRET` or `AUTH_SECRET` - Generate with `openssl rand -base64 32`
+- `GOOGLE_CLIENT_ID` or `CLIENT_ID` - From Google Cloud Console
+- `GOOGLE_CLIENT_SECRET` or `CLIENT_SECRET` - From Google Cloud Console
+- `REDIRECT_URI` or `GOOGLE_REDIRECT_URI` (optional) - Custom redirect URI. If not set, defaults to `{AUTH_URL}/api/auth/callback/google`
 
 4. Set up the database:
 ```bash

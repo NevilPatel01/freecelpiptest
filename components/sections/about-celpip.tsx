@@ -12,32 +12,32 @@ const sections = [
     name: "Listening",
     icon: Headphones,
     duration: "47-55 minutes",
-    tasks: "6-7 tasks",
-    description: "Listen to audio recordings and answer comprehension questions.",
+    tasks: "6 parts",
+    description: "Listen to audio recordings and answer comprehension questions covering various everyday situations.",
     gradient: "gradient-listening",
   },
   {
     name: "Reading",
     icon: BookOpen,
     duration: "55-60 minutes",
-    tasks: "4 reading passages",
-    description: "Read passages and answer questions to test comprehension.",
+    tasks: "4 parts",
+    description: "Read passages and answer questions to test comprehension of various text types.",
     gradient: "gradient-reading",
   },
   {
     name: "Writing",
     icon: PenTool,
     duration: "53-60 minutes",
-    tasks: "2 tasks (Email + Essay)",
-    description: "Write an email and an essay based on given prompts.",
+    tasks: "2 tasks",
+    description: "Task 1: Write an email (150-200 words). Task 2: Write an essay (200-300 words) responding to a question.",
     gradient: "gradient-writing",
   },
   {
     name: "Speaking",
     icon: Mic,
     duration: "15-20 minutes",
-    tasks: "8 speaking tasks",
-    description: "Complete various speaking tasks using a computer.",
+    tasks: "8 tasks",
+    description: "Complete various speaking tasks using a computer, including describing scenes, giving advice, and expressing opinions.",
     gradient: "gradient-speaking",
   },
 ]
@@ -47,15 +47,15 @@ export function AboutCELPIP() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <div className="container mx-auto container-padding py-12 md:py-16">
+    <div className="container mx-auto container-padding py-10 md:py-14">
       <motion.div
-        className="text-center mb-12 md:mb-16"
+        className="text-center mb-10"
         initial={sectionHeader.initial}
         animate={sectionHeader.animate}
         transition={sectionHeader.transition}
       >
-        <h1 className="heading-2 mb-4 text-gradient-primary">About the CELPIP Test</h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+        <h1 className="heading-2 mb-3 text-gradient-primary">About the CELPIP Test</h1>
+        <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
           Everything you need to know about the Canadian English Language Proficiency Index Program (CELPIP).
         </p>
       </motion.div>
@@ -68,7 +68,7 @@ export function AboutCELPIP() {
         className="mb-12"
       >
         <Card className="card-modern border-yellow-500/20 bg-yellow-500/5">
-          <CardContent className="p-6">
+          <CardContent className="p-5">
             <div className="flex items-start gap-4">
               <AlertTriangle className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div>
@@ -125,8 +125,8 @@ export function AboutCELPIP() {
               <Card key={section.name} className="card-hover card-elevated">
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-4 mb-5">
-                    <div className={`h-14 w-14 rounded-2xl ${section.gradient} flex items-center justify-center shadow-md`}>
-                      <Icon className="h-7 w-7 text-white" />
+                    <div className={`h-12 w-12 rounded-xl ${section.gradient} flex items-center justify-center shadow-sm`}>
+                      <Icon className="h-6 w-6 text-white" />
                     </div>
                     <CardTitle className="text-lg font-semibold">{section.name}</CardTitle>
                   </div>
@@ -164,7 +164,8 @@ export function AboutCELPIP() {
           <CardContent className="prose prose-sm md:prose-base dark:prose-invert max-w-none">
             <p>
               CELPIP uses a scale from 1 to 12 for each section, which corresponds to the Canadian Language
-              Benchmark (CLB) levels. Your overall score is the average of all four sections.
+              Benchmark (CLB) levels. Each section is scored independently, and immigration programs typically
+              require minimum scores in each section rather than an overall average.
             </p>
             <ul>
               <li><strong>CLB 4-5:</strong> Basic proficiency</li>
@@ -173,8 +174,9 @@ export function AboutCELPIP() {
               <li><strong>CLB 10-12:</strong> Expert proficiency</li>
             </ul>
             <p>
-              Most immigration programs require a minimum CLB level (typically CLB 7 or higher) depending on
-              the program and your specific circumstances.
+              Most immigration programs require minimum CLB levels in each section (typically CLB 7 or higher) depending on
+              the program and your specific circumstances. It's important to meet the minimum requirement in all four sections,
+              as programs typically don't accept an average score.
             </p>
           </CardContent>
         </Card>

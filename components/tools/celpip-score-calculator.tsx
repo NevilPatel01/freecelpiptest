@@ -28,14 +28,14 @@ export function CELPIPScoreCalculator() {
     speaking: "",
   })
 
-  const calculateAverage = () => {
+  const calculateMinimum = () => {
     const values = Object.values(scores).map(Number).filter(v => !isNaN(v) && v > 0)
     if (values.length === 0) return null
-    return Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+    return Math.min(...values)
   }
 
-  const averageScore = calculateAverage()
-  const clbLevel = averageScore ? Math.min(12, Math.max(4, Math.round(averageScore))) : null
+  const minimumScore = calculateMinimum()
+  const clbLevel = minimumScore ? Math.min(12, Math.max(4, minimumScore)) : null
 
   const handleScoreChange = (section: string, value: string) => {
     const numValue = parseInt(value)
@@ -52,12 +52,12 @@ export function CELPIPScoreCalculator() {
         animate={sectionHeader.animate}
         transition={sectionHeader.transition}
       >
-        <div className="inline-flex h-14 w-14 rounded-xl gradient-primary items-center justify-center mb-4 shadow-md">
-          <Calculator className="h-7 w-7 text-white" />
+        <div className="inline-flex h-12 w-12 rounded-xl gradient-primary items-center justify-center mb-4 shadow-sm">
+          <Calculator className="h-6 w-6 text-white" />
         </div>
         <h1 className="heading-2 mb-3 text-gradient-primary">CELPIP Score Calculator</h1>
         <p className="text-lg text-muted-foreground leading-relaxed">
-          Enter your CELPIP section scores to calculate your overall score and CLB level.
+          Enter your CELPIP section scores to see your individual section scores and minimum CLB level.
         </p>
       </motion.div>
 
@@ -98,7 +98,7 @@ export function CELPIPScoreCalculator() {
         </CardContent>
       </Card>
 
-      {averageScore && (
+      {minimumScore && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -109,12 +109,12 @@ export function CELPIPScoreCalculator() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-primary" />
-                Overall Score
+                Minimum Score
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className="text-4xl font-bold text-gradient-primary mb-2">{averageScore}</div>
-              <p className="text-sm text-muted-foreground">Average of all sections</p>
+              <div className="text-4xl font-bold text-gradient-primary mb-2">{minimumScore}</div>
+              <p className="text-sm text-muted-foreground">Lowest score across all sections</p>
             </CardContent>
           </Card>
 
@@ -122,7 +122,7 @@ export function CELPIPScoreCalculator() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
                 <Award className="h-5 w-5 text-primary" />
-                CLB Level
+                Minimum CLB Level
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
@@ -142,10 +142,10 @@ export function CELPIPScoreCalculator() {
             <div className="text-sm leading-relaxed">
               <p className="font-semibold mb-2">How CELPIP Scoring Works</p>
               <ul className="space-y-1.5 text-muted-foreground">
-                <li>• Each section is scored from 1 to 12</li>
-                <li>• Your overall score is the average of all four sections</li>
+                <li>• Each section is scored independently from 1 to 12</li>
                 <li>• CLB levels correspond directly to CELPIP scores (CLB 4-12)</li>
-                <li>• Most Canadian immigration programs require CLB 7 or higher</li>
+                <li>• Immigration programs require minimum scores in each section (typically CLB 7 or higher)</li>
+                <li>• Your minimum score determines your eligibility, not an average</li>
                 <li>• This calculator provides an estimate - official scores come from CELPIP</li>
               </ul>
             </div>

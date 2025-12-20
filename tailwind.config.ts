@@ -9,6 +9,21 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+      },
+      fontSize: {
+        'xs': ['0.75rem', { lineHeight: '1.5' }], // 12px
+        'sm': ['0.875rem', { lineHeight: '1.6' }], // 14px
+        'base': ['1rem', { lineHeight: '1.7' }], // 16px - professional standard
+        'lg': ['1.125rem', { lineHeight: '1.7' }], // 18px
+        'xl': ['1.25rem', { lineHeight: '1.6' }], // 20px
+        '2xl': ['1.5rem', { lineHeight: '1.5' }], // 24px
+        '3xl': ['1.875rem', { lineHeight: '1.4' }], // 30px
+        '4xl': ['2.25rem', { lineHeight: '1.3' }], // 36px
+        '5xl': ['3rem', { lineHeight: '1.2' }], // 48px
+        '6xl': ['3.75rem', { lineHeight: '1.1' }], // 60px
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

@@ -1,5 +1,6 @@
 import { remark } from 'remark'
 import html from 'remark-html'
+import remarkGfm from 'remark-gfm'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
@@ -49,6 +50,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
   const { data, content } = matter(fileContents)
 
   const processedContent = await remark()
+    .use(remarkGfm)
     .use(html)
     .process(content)
   

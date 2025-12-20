@@ -3,79 +3,90 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  
+  html {
+    font-size: 16px; /* Base font size - standard and professional */
+  }
+}
+
+@layer base {
   :root {
-    /* Muted, eye-friendly color system */
-    --background: 240 10% 96%;
-    --foreground: 240 10% 5%;
+    /* Neutral, eye-friendly color system - softer and less bright */
+    --background: 240 6% 93%;
+    --foreground: 240 8% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 5%;
+    --card-foreground: 240 8% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 5%;
-    /* Professional blue-teal - easier on eyes, trustworthy */
-    --primary: 200 90% 50%;
+    --popover-foreground: 240 8% 8%;
+    /* Professional blue-teal - softer and more refined */
+    --primary: 200 85% 48%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    /* Playful accent colors - more vibrant */
-    --accent: 217 92% 62%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+    --muted: 240 4% 96%;
+    --muted-foreground: 240 4% 40%;
+    /* Refined accent colors - less vibrant, more professional */
+    --accent: 217 88% 58%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 98%;
     /* Soft borders for clean separation */
-    --border: 240 5% 92%;
-    --input: 240 5% 92%;
-    --ring: 200 90% 50%;
+    --border: 240 5% 88%;
+    --input: 240 5% 88%;
+    --ring: 200 85% 48%;
     --radius: 0.75rem;
-    /* Success and status colors - more vibrant */
-    --success: 200 90% 48%;
-    --warning: 38 92% 56%;
-    /* Vibrant chart colors for engagement - more playful */
-    --chart-1: 200 90% 50%;
-    --chart-2: 217 92% 62%;
-    --chart-3: 271 82% 58%;
-    --chart-4: 38 92% 56%;
-    --chart-5: 199 90% 50%;
-    /* Section-specific colors - vibrant and playful */
-    --listening: 217 92% 62%;
-    --reading: 200 90% 50%;
-    --writing: 271 82% 58%;
-    --speaking: 38 92% 56%;
+    /* Success and status colors - refined */
+    --success: 142 70% 45%;
+    --warning: 38 88% 52%;
+    /* Professional chart colors - less vibrant */
+    --chart-1: 200 85% 48%;
+    --chart-2: 217 88% 58%;
+    --chart-3: 271 78% 54%;
+    --chart-4: 38 88% 52%;
+    --chart-5: 199 85% 48%;
+    /* Section-specific colors - refined and professional */
+    --listening: 217 88% 58%;
+    --reading: 200 85% 48%;
+    --writing: 271 78% 54%;
+    --speaking: 38 88% 52%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 8%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 8%;
-    --popover-foreground: 0 0% 98%;
-    /* Professional blue-teal in dark mode */
-    --primary: 200 90% 55%;
+    /* Neutral, eye-friendly dark mode - lighter and less harsh */
+    --background: 240 6% 10%;
+    --foreground: 0 0% 95%;
+    --card: 240 5% 13%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 5% 13%;
+    --popover-foreground: 0 0% 95%;
+    /* Professional blue-teal in dark mode - refined */
+    --primary: 200 85% 52%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 217 92% 67%;
+    --secondary: 240 4% 18%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 240 4% 18%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 217 88% 62%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 20%;
-    --input: 240 3.7% 20%;
-    --ring: 200 90% 55%;
-    --success: 200 90% 50%;
-    --warning: 38 92% 60%;
-    --chart-1: 200 90% 55%;
-    --chart-2: 217 92% 67%;
-    --chart-3: 271 82% 63%;
-    --chart-4: 38 92% 60%;
-    --chart-5: 199 90% 55%;
-    --listening: 217 92% 67%;
-    --reading: 200 90% 55%;
-    --writing: 271 82% 63%;
-    --speaking: 38 92% 60%;
+    --border: 240 4% 22%;
+    --input: 240 4% 22%;
+    --ring: 200 85% 52%;
+    --success: 142 70% 50%;
+    --warning: 38 88% 55%;
+    --chart-1: 200 85% 52%;
+    --chart-2: 217 88% 62%;
+    --chart-3: 271 78% 58%;
+    --chart-4: 38 88% 55%;
+    --chart-5: 199 85% 52%;
+    --listening: 217 88% 62%;
+    --reading: 200 85% 52%;
+    --writing: 271 78% 58%;
+    --speaking: 38 88% 55%;
   }
 }
 
@@ -87,13 +98,15 @@
     @apply bg-background text-foreground;
     background: hsl(var(--background));
     background-attachment: fixed;
-    line-height: 1.7;
+    font-size: 1rem; /* 16px base - professional standard */
+    line-height: 1.7; /* Comfortable line height for readability */
+    letter-spacing: -0.01em; /* Slightly tighter letter spacing for better flow */
   }
   .dark body {
     background: linear-gradient(
       to bottom,
-      hsl(240 10% 3.9%) 0%,
-      hsl(240 10% 6%) 100%
+      hsl(240 6% 10%) 0%,
+      hsl(240 5% 12%) 100%
     );
     background-attachment: fixed;
   }
@@ -102,23 +115,23 @@
 @layer utilities {
   /* Modern Card Utilities - Duolingo-inspired */
   
-  /* Clean modern card with subtle shadows */
+  /* Clean modern card with subtle shadows - refined */
   .card-modern {
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
-    border-radius: 1rem;
+    border-radius: 0.875rem;
     box-shadow: 
-      0 1px 3px rgba(0, 0, 0, 0.05),
-      0 4px 12px rgba(0, 0, 0, 0.04);
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 2px 8px rgba(0, 0, 0, 0.03);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .card-modern:hover {
     box-shadow: 
-      0 2px 6px rgba(0, 0, 0, 0.08),
-      0 8px 24px rgba(0, 0, 0, 0.06);
-    transform: translateY(-2px);
-    border-color: hsl(var(--primary) / 0.2);
+      0 2px 4px rgba(0, 0, 0, 0.06),
+      0 4px 12px rgba(0, 0, 0, 0.04);
+    transform: translateY(-1px);
+    border-color: hsl(var(--primary) / 0.15);
   }
 
   /* Card hover effect */
@@ -159,7 +172,7 @@
   .stat-card {
     @apply card-modern;
     text-align: center;
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   .stat-card-number {
@@ -179,37 +192,37 @@
     font-weight: 500;
   }
 
-  /* Vibrant and playful gradient utilities */
+  /* Professional gradient utilities - refined */
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 90% 55%) 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 85% 52%) 100%);
   }
 
   .gradient-listening {
-    background: linear-gradient(135deg, hsl(var(--listening)) 0%, hsl(217 92% 67%) 100%);
+    background: linear-gradient(135deg, hsl(var(--listening)) 0%, hsl(217 88% 62%) 100%);
   }
 
   .gradient-reading {
-    background: linear-gradient(135deg, hsl(var(--reading)) 0%, hsl(142 76% 57%) 100%);
+    background: linear-gradient(135deg, hsl(var(--reading)) 0%, hsl(200 85% 52%) 100%);
   }
 
   .gradient-writing {
-    background: linear-gradient(135deg, hsl(var(--writing)) 0%, hsl(271 82% 63%) 100%);
+    background: linear-gradient(135deg, hsl(var(--writing)) 0%, hsl(271 78% 58%) 100%);
   }
 
   .gradient-speaking {
-    background: linear-gradient(135deg, hsl(var(--speaking)) 0%, hsl(38 92% 60%) 100%);
+    background: linear-gradient(135deg, hsl(var(--speaking)) 0%, hsl(38 88% 56%) 100%);
   }
 
-  /* Text gradients - vibrant and playful */
+  /* Text gradients - professional */
   .text-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 90% 55%) 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 85% 52%) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   .text-gradient-accent {
-    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(217 92% 67%) 100%);
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(217 88% 62%) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -224,9 +237,9 @@
     color: hsl(var(--warning));
   }
 
-  /* Professional spacing utilities - optimized */
+  /* Professional spacing utilities - optimized for better UX */
   .section-padding {
-    @apply py-12 md:py-16;
+    @apply py-10 md:py-14;
   }
 
   .container-padding {
@@ -253,8 +266,16 @@
 
   /* Body text with improved line-height */
   .body-text {
+    font-size: 1rem; /* 16px - professional standard */
     line-height: 1.7;
     color: hsl(var(--foreground) / 0.9);
+  }
+  
+  /* Paragraph text - professional and readable */
+  p {
+    font-size: 1rem; /* 16px */
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
   }
 
   /* Text balance utility */
@@ -264,7 +285,7 @@
 
   /* Modern card styling */
   .card-elevated {
-    @apply card-modern rounded-2xl;
+    @apply card-modern rounded-xl;
   }
 
   /* Colorful accent utilities for playful design */
@@ -284,25 +305,25 @@
     @apply text-chart-4;
   }
 
-  /* Playful hover effects */
+  /* Refined hover effects */
   .hover-lift {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .hover-lift:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.1),
-      0 8px 24px rgba(0, 0, 0, 0.08);
+      0 2px 8px rgba(0, 0, 0, 0.06),
+      0 4px 16px rgba(0, 0, 0, 0.05);
   }
 
-  /* Duolingo-style button utilities - more vibrant */
+  /* Professional button utilities - refined */
   .btn-primary {
-    @apply gradient-primary text-white font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98];
+    @apply gradient-primary text-white font-semibold px-6 py-2.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.01] active:scale-[0.99];
   }
 
   .btn-secondary {
-    @apply border-2 border-primary/40 bg-background text-primary font-semibold px-6 py-3 rounded-xl hover:bg-primary/10 hover:border-primary transition-all duration-200;
+    @apply border border-primary/30 bg-background text-primary font-semibold px-6 py-2.5 rounded-lg hover:bg-primary/8 hover:border-primary/50 transition-all duration-200;
   }
 
   /* Colorful badge styles */

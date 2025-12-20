@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Clock, Share2, Bookmark, ArrowLeft, Facebook, Twitter, Linkedin } from "lucide-react"
+import { Clock, Share2, ArrowLeft, Facebook, Twitter, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BlogPostStructuredData } from "./structured-data"
@@ -18,11 +17,6 @@ interface BlogPostViewProps {
 }
 
 export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
-  const [isSaved, setIsSaved] = useState(false)
-
-  useEffect(() => {
-    // Check if post is saved (would need API call in real implementation)
-  }, [])
 
   const handleShare = (platform: string) => {
     const url = window.location.href
@@ -47,7 +41,7 @@ export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
         <BlogTableOfContents content={post.content} />
         
         {/* Main Content */}
-        <article className="flex-1 container mx-auto container-padding py-12 md:py-16 max-w-4xl">
+        <article className="flex-1 container mx-auto container-padding py-10 md:py-14 max-w-4xl">
           <Button variant="ghost" asChild className="mb-8 whitespace-nowrap" size="sm">
             <Link href="/blog" className="flex items-center">
               <ArrowLeft className="mr-2 h-3.5 w-3.5 flex-shrink-0" />
@@ -65,8 +59,10 @@ export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
             >
               <img
                 src={post.coverImage || post.featuredImage}
-                alt={post.title}
+                alt={`${post.title} - Cover image`}
                 className="w-full h-full object-cover"
+                loading="eager"
+                fetchPriority="high"
                 onError={(e) => {
                   // Hide image if it fails to load
                   e.currentTarget.style.display = 'none'
@@ -75,96 +71,77 @@ export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
             </motion.div>
           )}
 
-          <motion.header
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          <header
             className="mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold gradient-primary text-white mb-6 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold gradient-primary text-white mb-5 shadow-sm">
               {post.category}
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-gradient-primary">{post.title}</h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed font-light">{post.excerpt}</p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-5 leading-tight text-gradient-primary">{post.title}</h1>
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">{post.excerpt}</p>
             
             {/* Author and Meta Info */}
-            <div className="flex flex-wrap items-center gap-6 pb-8 border-b border-border/50">
+            <div className="flex flex-wrap items-center gap-4 pb-8 border-b border-border/50">
+              {/* Author Section */}
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-full gradient-primary flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                <div className="h-10 w-10 rounded-full gradient-primary flex items-center justify-center text-white font-semibold text-sm shadow-sm flex-shrink-0">
                   {post.author ? post.author.charAt(0).toUpperCase() : 'F'}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">{post.author || 'FreeCELPIPTest'}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <div className="text-sm font-semibold text-foreground leading-tight">{post.author || 'FreeCELPIPTest'}</div>
+                  <div className="text-xs text-muted-foreground leading-tight mt-0.5">
                     {new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span className="font-medium">{post.readingTime} min read</span>
-                </div>
-                {post.updatedAt && (
-                  <div className="text-xs">
-                    Updated {new Date(post.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          </motion.header>
 
-          {/* Share and Save - Sticky on scroll */}
-          <div className="sticky top-16 z-40 -mx-4 px-4 py-3 mb-8 bg-background/95 backdrop-blur-sm border-b border-border/50 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-muted-foreground">Share:</span>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleShare("twitter")}
-                  aria-label="Share on Twitter"
-                  className="h-8 w-8 p-0 hover:bg-primary/10"
-                >
-                  <Twitter className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleShare("facebook")}
-                  aria-label="Share on Facebook"
-                  className="h-8 w-8 p-0 hover:bg-primary/10"
-                >
-                  <Facebook className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleShare("linkedin")}
-                  aria-label="Share on LinkedIn"
-                  className="h-8 w-8 p-0 hover:bg-primary/10"
-                >
-                  <Linkedin className="h-4 w-4" />
-                </Button>
+              {/* Divider */}
+              <div className="h-4 w-px bg-border/60 hidden sm:block" />
+
+              {/* Reading Time */}
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Clock className="h-4 w-4 flex-shrink-0" />
+                <span className="font-medium">{post.readingTime} min read</span>
+              </div>
+
+              {/* Share Section */}
+              <div className="flex items-center gap-2 ml-auto">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Share</span>
+                <div className="flex items-center gap-0.5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleShare("twitter")}
+                    aria-label="Share on Twitter"
+                    className="h-8 w-8 p-0 hover:bg-primary/10 rounded-md"
+                  >
+                    <Twitter className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleShare("facebook")}
+                    aria-label="Share on Facebook"
+                    className="h-8 w-8 p-0 hover:bg-primary/10 rounded-md"
+                  >
+                    <Facebook className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleShare("linkedin")}
+                    aria-label="Share on LinkedIn"
+                    className="h-8 w-8 p-0 hover:bg-primary/10 rounded-md"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsSaved(!isSaved)}
-              aria-label="Save article"
-              className="h-8 px-3 hover:bg-primary/10 whitespace-nowrap"
-            >
-              <Bookmark className={`h-4 w-4 mr-2 flex-shrink-0 ${isSaved ? "fill-current text-primary" : ""}`} />
-              <span>{isSaved ? "Saved" : "Save"}</span>
-            </Button>
-          </div>
+          </header>
 
           {/* Content */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          <div
             className="prose prose-lg dark:prose-invert max-w-none mb-12
               prose-headings:font-bold prose-headings:text-foreground 
               prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-10 prose-h1:scroll-mt-20 prose-h1:leading-tight
@@ -181,9 +158,11 @@ export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
               prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-4 prose-pre:overflow-x-auto prose-pre:my-6
               prose-img:rounded-xl prose-img:shadow-md prose-img:my-8 prose-img:border prose-img:border-border
               prose-hr:border-border prose-hr:my-8
-              prose-table:w-full prose-table:border-collapse prose-table:my-6
-              prose-th:border prose-th:border-border prose-th:bg-muted prose-th:p-3 prose-th:text-left prose-th:font-semibold
-              prose-td:border prose-td:border-border prose-td:p-3"
+              prose-table:w-full prose-table:border-collapse prose-table:my-8 prose-table:shadow-sm prose-table:rounded-lg prose-table:overflow-hidden prose-table:border prose-table:border-border
+              prose-th:border prose-th:border-border prose-th:bg-muted/80 prose-th:p-4 prose-th:text-left prose-th:font-semibold prose-th:text-foreground prose-th:text-sm prose-th:first:rounded-tl-lg prose-th:last:rounded-tr-lg
+              prose-td:border prose-td:border-border prose-td:p-4 prose-td:text-foreground/90 prose-td:text-sm prose-td:align-top
+              prose-tr:border-b prose-tr:border-border prose-tr:last:border-b-0 prose-tr:hover:bg-muted/30 prose-tr:transition-colors
+              prose-thead:bg-muted/50 prose-tbody:bg-background"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
 
@@ -207,7 +186,7 @@ export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
           {relatedPosts.length > 0 && (
             <div className="mt-16 pt-12 border-t">
               <h2 className="heading-3 mb-8 text-gradient-primary">Related Articles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {relatedPosts.map((relatedPost) => (
                   <motion.div
                     key={relatedPost.slug}

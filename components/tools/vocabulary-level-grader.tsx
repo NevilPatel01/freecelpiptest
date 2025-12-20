@@ -90,8 +90,8 @@ export function VocabularyLevelGrader() {
         animate={sectionHeader.animate}
         transition={sectionHeader.transition}
       >
-        <div className="inline-flex h-14 w-14 rounded-xl gradient-primary items-center justify-center mb-4 shadow-md">
-          <BookOpen className="h-7 w-7 text-white" />
+        <div className="inline-flex h-12 w-12 rounded-xl gradient-primary items-center justify-center mb-4 shadow-sm">
+          <BookOpen className="h-6 w-6 text-white" />
         </div>
         <h1 className="heading-2 mb-3 text-gradient-primary">Vocabulary Level Grader</h1>
         <p className="text-lg text-muted-foreground leading-relaxed">

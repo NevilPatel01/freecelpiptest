@@ -84,15 +84,15 @@ export function MockTestsDashboard() {
   }
 
   return (
-    <div className="container mx-auto container-padding py-12 md:py-16">
+    <div className="container mx-auto container-padding py-10 md:py-14">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-12"
+        className="mb-10"
       >
-        <h1 className="heading-2 mb-4 text-gradient-primary">CELPIP Mock Tests</h1>
-        <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-          Take a full-length practice test to simulate the real CELPIP exam experience.
+        <h1 className="heading-2 mb-3 text-gradient-primary">CELPIP Mock Tests</h1>
+        <p className="text-base text-muted-foreground leading-relaxed">
+          Practice with sample questions and exercises to help you prepare for the CELPIP test format and timing.
         </p>
       </motion.div>
 
@@ -144,7 +144,7 @@ export function MockTestsDashboard() {
           </Card>
 
           <Card className="card-modern border-primary/20 card-elevated">
-            <CardContent className="p-6 md:p-8">
+            <CardContent className="p-5">
               <div className="flex items-start gap-4">
                 <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0 shadow-md">
                   <AlertCircle className="h-6 w-6 text-white" />
@@ -152,7 +152,7 @@ export function MockTestsDashboard() {
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold mb-2 text-gradient-primary">Complete mock tests coming soon</h3>
                   <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                    We're building the full mock test experience with realistic questions, timing, and scoring.
+                    We're building practice exercises with sample questions to help you prepare. These are not official CELPIP materials.
                     Sign up to get notified when it's ready!
                   </p>
                   <div className="flex gap-2">
@@ -219,7 +219,7 @@ export function MockTestsDashboard() {
                 </div>
               </div>
 
-              <div className="bg-muted/30 rounded-lg p-6 mb-6 border border-border">
+              <div className="bg-muted/30 rounded-lg p-5 mb-5 border border-border">
                 <p className="text-center text-muted-foreground">
                   Mock test interface preview. Full test experience coming soon!
                 </p>

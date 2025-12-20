@@ -35,7 +35,14 @@ export function Header() {
     { name: "Mock Tests", href: "/mock-tests" },
     { name: "Blog", href: "/blog" },
     { name: "Resources", href: "/resources" },
-    { name: "Contact", href: "/contact" },
+    {
+      name: "Tools",
+      href: "/celpip-score-calculator",
+      submenu: [
+        { name: "Score Calculator", href: "/celpip-score-calculator" },
+        { name: "Vocabulary Grader", href: "/vocabulary-level-grader" },
+      ],
+    },
   ]
 
   const isActive = (href: string) => {
@@ -53,8 +60,8 @@ export function Header() {
           <img
             src="/assets/logo-bg.png"
             alt="FreeCELPIPTest"
-            className="h-12 md:h-14 w-auto"
-            style={{ maxWidth: '200px' }}
+            className="h-8 md:h-10 w-auto"
+            style={{ maxWidth: '140px' }}
             loading="eager"
           />
         </Link>
@@ -116,7 +123,7 @@ export function Header() {
                   />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 z-[100]">
                 <div className="px-2 py-1.5">
                   <p className="text-sm font-medium">{session.user.name}</p>
                   <p className="text-xs text-muted-foreground">{session.user.email}</p>
@@ -147,22 +154,18 @@ export function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
-            <Button 
-              onClick={() => signIn("google")} 
-              className="hidden sm:inline-flex shadow-md hover:shadow-lg"
-              size="default"
-            >
-              Sign in with Google
-            </Button>
-          )}
+          ) : null}
 
           <Button
             variant="ghost"
             size="icon"
             className="lg:hidden"
-            onClick={() => setMobileMenuOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setMobileMenuOpen(true)
+            }}
             aria-label="Open menu"
+            type="button"
           >
             <Menu className="h-6 w-6" />
           </Button>

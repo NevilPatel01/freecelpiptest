@@ -53,12 +53,12 @@ export function PracticeTestsLanding() {
         transition={sectionHeader.transition}
       >
         <h1 className="heading-2 mb-3 text-gradient-primary">CELPIP Practice Tests</h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Practice all four sections of the CELPIP test with realistic questions and detailed feedback.
+        <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          Practice all four sections of the CELPIP test with sample questions and exercises to help you prepare.
         </p>
       </motion.div>
 
-      <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      <div ref={ref} className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
         {sections.map((section, index) => {
           const Icon = section.icon
           return (
@@ -70,7 +70,7 @@ export function PracticeTestsLanding() {
             >
               <Card className="card-hover h-full card-elevated">
                 <CardHeader className="pb-3">
-                  <div className={`inline-flex h-12 w-12 rounded-xl ${section.gradient} items-center justify-center mb-3 shadow-md`}>
+                  <div className={`inline-flex h-12 w-12 rounded-xl ${section.gradient} items-center justify-center mb-3 shadow-sm`}>
                     <Icon className="h-6 w-6 text-white" />
                   </div>
                   <CardTitle className="text-lg font-semibold mb-1.5 text-gradient-primary">{section.name}</CardTitle>
@@ -105,10 +105,10 @@ export function PracticeTestsLanding() {
         initial={slideUp.initial}
         animate={isInView ? slideUp.animate : slideUp.initial}
         transition={{ ...slideUp.transition, delay: 0.4 }}
-        className="card-modern rounded-2xl p-6 md:p-8 mb-8 border-primary/20"
+        className="card-modern rounded-xl p-5 mb-6 border-primary/20"
       >
         <div className="flex items-start gap-4">
-          <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0 shadow-md">
+          <div className="h-12 w-12 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0 shadow-sm">
             <TrendingUp className="h-6 w-6 text-white" />
           </div>
           <div className="flex-1">

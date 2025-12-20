@@ -8,22 +8,22 @@ import { heroAnimations } from "@/lib/animations"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Warm gradient background */}
+    <section className="relative min-h-[75vh] flex items-center justify-center overflow-hidden">
+      {/* Subtle gradient background */}
       <div className="absolute inset-0 z-0">
         <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5"
+          className="absolute inset-0 bg-gradient-to-br from-primary/3 via-background to-accent/3"
           initial={{ scale: 1.05 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,197,94,0.08),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(59,130,246,0.05),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,197,94,0.04),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(59,130,246,0.03),transparent_50%)]" />
       </div>
 
-      <div className="container relative z-10 mx-auto px-4 py-16 md:py-20">
+      <div className="container relative z-10 mx-auto px-4 py-12 md:py-16">
         <motion.div
-          className="max-w-4xl mx-auto text-center space-y-6 md:space-y-8"
+          className="max-w-4xl mx-auto text-center space-y-5 md:space-y-6"
           {...heroAnimations.container}
         >
           <motion.h1
@@ -42,41 +42,41 @@ export function HeroSection() {
             {...heroAnimations.subtitle}
           >
             Prepare for your CELPIP test with comprehensive practice materials, study guides, and
-            expert strategies. 100% free, forever.
+            expert strategies designed to help you achieve your target score.
           </motion.p>
 
           <motion.div
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             {...heroAnimations.buttons}
           >
-            <Button size="lg" className="text-lg px-8 py-6 shadow-lg whitespace-nowrap" asChild>
+            <Button size="lg" className="text-base px-6 py-3 shadow-md whitespace-nowrap" asChild>
               <Link href="/practice" className="flex items-center">
                 <span>Start Free Practice</span>
-                <ArrowRight className="ml-2 h-5 w-5 flex-shrink-0" />
+                <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 whitespace-nowrap" asChild>
+            <Button size="lg" variant="outline" className="text-base px-6 py-3 border whitespace-nowrap" asChild>
               <Link href="/blog" className="flex items-center">
                 <span>Read Study Tips</span>
-                <Play className="ml-2 h-5 w-5 flex-shrink-0" />
+                <Play className="ml-2 h-4 w-4 flex-shrink-0" />
               </Link>
             </Button>
           </motion.div>
 
           <motion.div
-            className="pt-8 flex flex-wrap justify-center gap-4 text-sm"
+            className="pt-6 flex flex-wrap justify-center gap-3 text-sm"
             {...heroAnimations.badges}
           >
-            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border-2 border-primary/20 shadow-sm">
-              <CheckCircle2 className="h-4 w-4 text-primary flex-shrink-0" />
-              <span className="font-medium text-foreground">100% Free Forever</span>
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-primary/15 shadow-sm">
+              <CheckCircle2 className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+              <span className="font-medium text-foreground">Comprehensive Practice Materials</span>
             </div>
-            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border-2 border-chart-2/20 shadow-sm">
-              <CheckCircle2 className="h-4 w-4 text-chart-2 flex-shrink-0" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-chart-2/15 shadow-sm">
+              <CheckCircle2 className="h-3.5 w-3.5 text-chart-2 flex-shrink-0" />
               <span className="font-medium text-foreground">All 4 Test Sections</span>
             </div>
-            <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border-2 border-chart-3/20 shadow-sm">
-              <CheckCircle2 className="h-4 w-4 text-chart-3 flex-shrink-0" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-chart-3/15 shadow-sm">
+              <CheckCircle2 className="h-3.5 w-3.5 text-chart-3 flex-shrink-0" />
               <span className="font-medium text-foreground">Expert Study Guides</span>
             </div>
           </motion.div>

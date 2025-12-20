@@ -10,9 +10,9 @@ import { sectionHeader, cardItem } from "@/lib/animations"
 const valueProps = [
   {
     icon: Infinity,
-    title: "100% Free Forever",
-    description: "No hidden fees, no subscriptions. All practice tests and study materials are completely free.",
-    stat: "Free",
+    title: "Comprehensive Resources",
+    description: "Access all practice tests, study guides, and expert strategies to help you succeed on your CELPIP test.",
+    stat: "Complete",
     color: "gradient-primary",
     iconColor: "text-primary",
   },
@@ -50,18 +50,18 @@ export function ValueProposition() {
     <section ref={ref} className="section-padding bg-background">
       <div className="container mx-auto container-padding">
         <motion.div
-          className="text-center mb-12"
+          className="text-center mb-10"
           initial={sectionHeader.initial}
           animate={isInView ? sectionHeader.animate : sectionHeader.initial}
           transition={sectionHeader.transition}
         >
-          <h2 className="heading-2 mb-3 text-gradient-primary">Why Choose FreeCELPIPTest?</h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <h2 className="heading-2 mb-2 text-gradient-primary">Why Choose FreeCELPIPTest?</h2>
+          <p className="text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Everything you need to succeed on your CELPIP test, completely free.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {valueProps.map((prop, index) => {
             const Icon = prop.icon
             return (
@@ -73,11 +73,11 @@ export function ValueProposition() {
               >
                 <Card className="card-hover h-full text-center card-elevated">
                   <CardHeader className="pb-3">
-                    <div className={`mx-auto mb-4 h-14 w-14 rounded-xl ${prop.color} flex items-center justify-center shadow-md`}>
-                      <Icon className="h-7 w-7 text-white" />
+                    <div className={`mx-auto mb-3 h-12 w-12 rounded-lg ${prop.color} flex items-center justify-center shadow-sm`}>
+                      <Icon className="h-6 w-6 text-white" />
                     </div>
-                    <CardTitle className="text-xl font-bold text-gradient-primary mb-1.5">{prop.stat}</CardTitle>
-                    <CardDescription className="text-base font-semibold">
+                    <CardTitle className="text-lg font-semibold text-gradient-primary mb-1.5">{prop.stat}</CardTitle>
+                    <CardDescription className="text-sm font-medium">
                       {prop.title}
                     </CardDescription>
                   </CardHeader>

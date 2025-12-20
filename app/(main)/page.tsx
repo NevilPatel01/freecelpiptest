@@ -18,11 +18,11 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <HeroSection />
-      <Statistics />
+      {/* <Statistics /> */}
       <ValueProposition />
-      <HowItWorks />
+      {/* <HowItWorks /> */}
       <FeaturedBlog />
-      <Testimonials />
+      {/* <Testimonials /> */}
     </div>
   )
 }

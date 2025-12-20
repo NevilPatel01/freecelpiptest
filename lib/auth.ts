@@ -2,11 +2,43 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { prisma } from "./prisma"
 
+// Get Google OAuth credentials from environment variables
+const googleClientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.CLIENT_SECRET
+
+// Get NextAuth secret (v5 uses AUTH_SECRET, v4 uses NEXTAUTH_SECRET)
+const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
+const authUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000"
+
+// Get redirect URI from env or construct from authUrl
+// Priority: REDIRECT_URI > GOOGLE_REDIRECT_URI > auto-generated from authUrl
+const redirectUri = process.env.REDIRECT_URI || process.env.GOOGLE_REDIRECT_URI || `${authUrl}/api/auth/callback/google`
+
+if (!googleClientId || !googleClientSecret) {
+  throw new Error(
+    "Missing Google OAuth credentials. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (or CLIENT_ID and CLIENT_SECRET) in your .env file"
+  )
+}
+
+if (!authSecret) {
+  throw new Error(
+    "Missing AUTH_SECRET. Please set AUTH_SECRET or NEXTAUTH_SECRET in your .env file. Generate one with: openssl rand -base64 32"
+  )
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
+  secret: authSecret,
+  basePath: "/api/auth",
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+      authorization: {
+        params: {
+          redirect_uri: redirectUri,
+        },
+      },
     }),
   ],
   callbacks: {

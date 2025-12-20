@@ -76,7 +76,7 @@ export function PracticeSection({ section }: PracticeSectionProps) {
   const wordCount = writingText.split(/\s+/).filter(word => word.length > 0).length
 
   return (
-    <div className="container mx-auto container-padding py-8 md:py-12">
+    <div className="container mx-auto container-padding py-10 md:py-14">
       <Button variant="ghost" asChild className="mb-6 whitespace-nowrap" size="sm">
         <Link href="/practice" className="flex items-center">
           <ArrowLeft className="mr-2 h-3.5 w-3.5 flex-shrink-0" />
@@ -91,8 +91,8 @@ export function PracticeSection({ section }: PracticeSectionProps) {
           <Card className="card-modern card-elevated">
             <CardHeader className="pb-4">
               <div className="flex items-center gap-4">
-                <div className={`h-14 w-14 rounded-2xl ${config.gradient} flex items-center justify-center shadow-md`}>
-                  <Icon className="h-7 w-7 text-white" />
+                <div className={`h-12 w-12 rounded-xl ${config.gradient} flex items-center justify-center shadow-sm`}>
+                  <Icon className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <CardTitle className="text-xl font-semibold text-gradient-primary">{config.name} Practice</CardTitle>
@@ -146,7 +146,7 @@ export function PracticeSection({ section }: PracticeSectionProps) {
               {/* Listening Interface */}
               {section === "listening" && (
                 <>
-                  <div className="bg-muted/30 rounded-lg p-6 text-center border border-border">
+                  <div className="bg-muted/30 rounded-lg p-5 text-center border border-border">
                     <Button
                       variant="outline"
                       size="lg"
@@ -191,7 +191,7 @@ export function PracticeSection({ section }: PracticeSectionProps) {
               {/* Reading Interface */}
               {section === "reading" && (
                 <>
-                  <div className="bg-muted/30 rounded-lg p-6 max-h-64 overflow-y-auto border border-border">
+                  <div className="bg-muted/30 rounded-lg p-5 max-h-64 overflow-y-auto border border-border">
                     <p className="text-sm leading-relaxed">
                       This is a sample reading passage. In the full version, you'll see complete passages
                       with multiple paragraphs. Read carefully and answer the questions below.

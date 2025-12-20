@@ -102,7 +102,6 @@ export function Footer() {
     Legal: [
       { name: "Privacy Policy", href: "/privacy" },
       { name: "Terms of Service", href: "/terms" },
-      { name: "Disclaimer", href: "/disclaimer" },
       { name: "Contact", href: "/contact" },
     ],
   }
@@ -116,8 +115,8 @@ export function Footer() {
 
   return (
     <footer className="border-t border-border/50 bg-background">
-      <div className="container mx-auto container-padding py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12">
+      <div className="container mx-auto container-padding py-10 md:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10">
           {/* Brand & Newsletter */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-5">
@@ -126,8 +125,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-              Master CELPIP with free practice tests, expert tips, and comprehensive study resources.
-              100% free forever.
+              Master CELPIP with comprehensive practice tests, expert tips, and study resources designed to help you achieve your target score.
             </p>
             
             {/* Newsletter Signup */}
@@ -186,9 +184,6 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} FreeCELPIPTest. All rights reserved.
-          </p>
-          <p className="text-xs text-muted-foreground text-center leading-relaxed max-w-md">
-            This website is NOT affiliated with or endorsed by CELPIP. We are an independent study resource.
           </p>
           <div className="flex items-center gap-4">
             {/* Feedback Dialog */}

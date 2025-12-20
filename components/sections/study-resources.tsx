@@ -79,7 +79,7 @@ const studyGuides = [
 ]
 
 const quickTips = [
-  "Practice regularly with realistic test materials",
+  "Practice regularly with sample questions and exercises",
   "Focus on your weakest section but don't neglect others",
   "Time yourself during practice to build speed and stamina",
   "Review your mistakes and learn from them systematically",
@@ -247,7 +247,7 @@ export function StudyResources() {
                   The Canadian English Language Proficiency Index Program (CELPIP) is an English language test designed for Canadian immigration and citizenship purposes. It assesses your English language skills in four areas: Listening, Reading, Writing, and Speaking.
                 </p>
                 <p className="text-sm leading-relaxed mb-4">
-                  CELPIP uses a scale from 1 to 12 for each section, which corresponds to the Canadian Language Benchmark (CLB) levels. Your overall score is the average of all four sections.
+                  CELPIP uses a scale from 1 to 12 for each section, which corresponds to the Canadian Language Benchmark (CLB) levels. Each section is scored independently, and immigration programs typically require minimum scores in each section rather than an overall average.
                 </p>
                 <div className="bg-muted/50 rounded-lg p-4 mt-4 border border-border/50">
                   <p className="text-xs font-semibold text-muted-foreground mb-2">Important Disclaimer</p>
@@ -272,10 +272,10 @@ export function StudyResources() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { name: "Listening", duration: "47-55 minutes", tasks: "6-7 tasks" },
-                  { name: "Reading", duration: "55-60 minutes", tasks: "4 reading passages" },
-                  { name: "Writing", duration: "53-60 minutes", tasks: "2 tasks (Email + Essay)" },
-                  { name: "Speaking", duration: "15-20 minutes", tasks: "8 speaking tasks" },
+                  { name: "Listening", duration: "47-55 minutes", tasks: "6 parts" },
+                  { name: "Reading", duration: "55-60 minutes", tasks: "4 parts" },
+                  { name: "Writing", duration: "53-60 minutes", tasks: "2 tasks" },
+                  { name: "Speaking", duration: "15-20 minutes", tasks: "8 tasks" },
                 ].map((section, index) => (
                   <Card key={section.name} className="card-hover card-elevated">
                     <CardHeader className="pb-3">

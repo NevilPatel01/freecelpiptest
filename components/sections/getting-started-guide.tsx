@@ -52,7 +52,7 @@ export function GettingStartedGuide() {
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
   return (
-    <div className="container mx-auto container-padding py-12 md:py-16">
+    <div className="container mx-auto container-padding py-10 md:py-14">
       <motion.div
         className="text-center mb-12 md:mb-16"
         initial={sectionHeader.initial}
