@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 
+// Mark this route as dynamic to prevent static generation
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 const newsletterSchema = z.object({
   email: z.string().email("Invalid email address"),
 })

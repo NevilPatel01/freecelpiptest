@@ -2,41 +2,61 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { prisma } from "./prisma"
 
-// Get Google OAuth credentials from environment variables
-const googleClientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID
-const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.CLIENT_SECRET
+// Helper function to get config (only throws at runtime, not build time)
+function getAuthConfig() {
+  // Get Google OAuth credentials from environment variables
+  const googleClientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID
+  const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.CLIENT_SECRET
 
-// Get NextAuth secret (v5 uses AUTH_SECRET, v4 uses NEXTAUTH_SECRET)
-const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
-const authUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000"
+  // Get NextAuth secret (v5 uses AUTH_SECRET, v4 uses NEXTAUTH_SECRET)
+  const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
+  const authUrl = process.env.AUTH_URL || process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 
-// Get redirect URI from env or construct from authUrl
-// Priority: REDIRECT_URI > GOOGLE_REDIRECT_URI > auto-generated from authUrl
-const redirectUri = process.env.REDIRECT_URI || process.env.GOOGLE_REDIRECT_URI || `${authUrl}/api/auth/callback/google`
+  // Get redirect URI from env or construct from authUrl
+  // Priority: REDIRECT_URI > GOOGLE_REDIRECT_URI > auto-generated from authUrl
+  const redirectUri = process.env.REDIRECT_URI || process.env.GOOGLE_REDIRECT_URI || `${authUrl}/api/auth/callback/google`
 
-if (!googleClientId || !googleClientSecret) {
-  throw new Error(
-    "Missing Google OAuth credentials. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET (or CLIENT_ID and CLIENT_SECRET) in your .env file"
-  )
+  // Only throw errors at runtime (when actually using auth), not during build
+  // During build, we'll use placeholder values if env vars are missing
+  if (process.env.NODE_ENV === 'production' && (!googleClientId || !googleClientSecret)) {
+    console.warn(
+      "Warning: Missing Google OAuth credentials. Auth will not work. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment variables."
+    )
+  }
+
+  if (process.env.NODE_ENV === 'production' && !authSecret) {
+    console.warn(
+      "Warning: Missing AUTH_SECRET. Auth will not work. Please set AUTH_SECRET or NEXTAUTH_SECRET in your environment variables."
+    )
+  }
+
+  // Use placeholder values during build if env vars are missing
+  const clientId = googleClientId || "placeholder-client-id"
+  const clientSecret = googleClientSecret || "placeholder-client-secret"
+  const secret = authSecret || "placeholder-secret-for-build"
+
+  return {
+    clientId,
+    clientSecret,
+    secret,
+    authUrl,
+    redirectUri,
+  }
 }
 
-if (!authSecret) {
-  throw new Error(
-    "Missing AUTH_SECRET. Please set AUTH_SECRET or NEXTAUTH_SECRET in your .env file. Generate one with: openssl rand -base64 32"
-  )
-}
+const config = getAuthConfig()
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
-  secret: authSecret,
+  secret: config.secret,
   basePath: "/api/auth",
   providers: [
     Google({
-      clientId: googleClientId,
-      clientSecret: googleClientSecret,
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
       authorization: {
         params: {
-          redirect_uri: redirectUri,
+          redirect_uri: config.redirectUri,
         },
       },
     }),

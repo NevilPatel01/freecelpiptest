@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   
   // Static generation
-  output: 'standalone', // For Vercel deployment
+  output: 'standalone', // For Digital Ocean App Platform deployment
   
   // Headers for caching
   async headers() {
