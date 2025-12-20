@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String?
+  googleId          String?   @unique
+  image             String?
+  createdAt         DateTime  @default(now())
+  savedBlogs        BlogPost[] @relation("SavedBlogs")
+  testProgress      TestProgress[]
+  notificationPrefs Json?     // { mockTests: boolean, blogUpdates: boolean }
+}
+
+model BlogPost {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  content       String    // Markdown content
+  excerpt       String
+  featuredImage String?
+  category      String
+  tags          String[]
+  readingTime   Int
+  publishedAt   DateTime  @default(now())
+  authorId      String
+  views         Int       @default(0)
+  savedBy       User[]    @relation("SavedBlogs")
+}
+
+model TestProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testSection String   // "listening" | "reading" | "writing" | "speaking"
+  progress    Int      // 0-100
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Newsletter {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  subscribedAt DateTime @default(now())
+  active      Boolean  @default(true)
+}

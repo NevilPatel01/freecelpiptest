@@ -1,0 +1,379 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Muted, eye-friendly color system */
+    --background: 240 10% 96%;
+    --foreground: 240 10% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 5%;
+    /* Professional blue-teal - easier on eyes, trustworthy */
+    --primary: 200 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    /* Playful accent colors - more vibrant */
+    --accent: 217 92% 62%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    /* Soft borders for clean separation */
+    --border: 240 5% 92%;
+    --input: 240 5% 92%;
+    --ring: 200 90% 50%;
+    --radius: 0.75rem;
+    /* Success and status colors - more vibrant */
+    --success: 200 90% 48%;
+    --warning: 38 92% 56%;
+    /* Vibrant chart colors for engagement - more playful */
+    --chart-1: 200 90% 50%;
+    --chart-2: 217 92% 62%;
+    --chart-3: 271 82% 58%;
+    --chart-4: 38 92% 56%;
+    --chart-5: 199 90% 50%;
+    /* Section-specific colors - vibrant and playful */
+    --listening: 217 92% 62%;
+    --reading: 200 90% 50%;
+    --writing: 271 82% 58%;
+    --speaking: 38 92% 56%;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
+    /* Professional blue-teal in dark mode */
+    --primary: 200 90% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 217 92% 67%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 20%;
+    --input: 240 3.7% 20%;
+    --ring: 200 90% 55%;
+    --success: 200 90% 50%;
+    --warning: 38 92% 60%;
+    --chart-1: 200 90% 55%;
+    --chart-2: 217 92% 67%;
+    --chart-3: 271 82% 63%;
+    --chart-4: 38 92% 60%;
+    --chart-5: 199 90% 55%;
+    --listening: 217 92% 67%;
+    --reading: 200 90% 55%;
+    --writing: 271 82% 63%;
+    --speaking: 38 92% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background: hsl(var(--background));
+    background-attachment: fixed;
+    line-height: 1.7;
+  }
+  .dark body {
+    background: linear-gradient(
+      to bottom,
+      hsl(240 10% 3.9%) 0%,
+      hsl(240 10% 6%) 100%
+    );
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  /* Modern Card Utilities - Duolingo-inspired */
+  
+  /* Clean modern card with subtle shadows */
+  .card-modern {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    box-shadow: 
+      0 1px 3px rgba(0, 0, 0, 0.05),
+      0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-modern:hover {
+    box-shadow: 
+      0 2px 6px rgba(0, 0, 0, 0.08),
+      0 8px 24px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.2);
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    @apply card-modern;
+  }
+
+  /* Success badges */
+  .badge-success {
+    background: hsl(var(--success));
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 0.5rem;
+    background: hsl(var(--muted));
+    border-radius: 9999px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.8));
+    border-radius: 9999px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Statistics card */
+  .stat-card {
+    @apply card-modern;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .stat-card-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+
+  .stat-card-label {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+    margin-top: 0.5rem;
+    font-weight: 500;
+  }
+
+  /* Vibrant and playful gradient utilities */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 90% 55%) 100%);
+  }
+
+  .gradient-listening {
+    background: linear-gradient(135deg, hsl(var(--listening)) 0%, hsl(217 92% 67%) 100%);
+  }
+
+  .gradient-reading {
+    background: linear-gradient(135deg, hsl(var(--reading)) 0%, hsl(142 76% 57%) 100%);
+  }
+
+  .gradient-writing {
+    background: linear-gradient(135deg, hsl(var(--writing)) 0%, hsl(271 82% 63%) 100%);
+  }
+
+  .gradient-speaking {
+    background: linear-gradient(135deg, hsl(var(--speaking)) 0%, hsl(38 92% 60%) 100%);
+  }
+
+  /* Text gradients - vibrant and playful */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(200 90% 55%) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-accent {
+    background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(217 92% 67%) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Success and status text colors */
+  .text-success {
+    color: hsl(var(--success));
+  }
+
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+
+  /* Professional spacing utilities - optimized */
+  .section-padding {
+    @apply py-12 md:py-16;
+  }
+
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Improved typography with better readability */
+  .heading-1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .heading-2 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .heading-3 {
+    @apply text-2xl md:text-3xl font-semibold tracking-tight;
+    line-height: 1.3;
+  }
+
+  /* Body text with improved line-height */
+  .body-text {
+    line-height: 1.7;
+    color: hsl(var(--foreground) / 0.9);
+  }
+
+  /* Text balance utility */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Modern card styling */
+  .card-elevated {
+    @apply card-modern rounded-2xl;
+  }
+
+  /* Colorful accent utilities for playful design */
+  .accent-listening {
+    @apply text-chart-2;
+  }
+
+  .accent-reading {
+    @apply text-chart-1;
+  }
+
+  .accent-writing {
+    @apply text-chart-3;
+  }
+
+  .accent-speaking {
+    @apply text-chart-4;
+  }
+
+  /* Playful hover effects */
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.1),
+      0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Duolingo-style button utilities - more vibrant */
+  .btn-primary {
+    @apply gradient-primary text-white font-semibold px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply border-2 border-primary/40 bg-background text-primary font-semibold px-6 py-3 rounded-xl hover:bg-primary/10 hover:border-primary transition-all duration-200;
+  }
+
+  /* Colorful badge styles */
+  .badge-primary {
+    @apply bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-accent {
+    @apply bg-accent/10 text-accent border border-accent/20 px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  /* Playful icon containers */
+  .icon-container-primary {
+    @apply gradient-primary rounded-xl p-3 shadow-md;
+  }
+
+  .icon-container-accent {
+    @apply gradient-listening rounded-xl p-3 shadow-md;
+  }
+
+  /* Consistent animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Smooth transitions for interactive elements */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transition-fast {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
