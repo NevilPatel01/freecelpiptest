@@ -1,14 +1,12 @@
-"use client"
-
 import Link from "next/link"
-import { motion } from "framer-motion"
-import { Clock, Share2, ArrowLeft, Facebook, Twitter, Linkedin } from "lucide-react"
+import { Clock, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BlogPostStructuredData } from "./structured-data"
 import { BlogCard } from "./blog-card"
 import { BlogTableOfContents } from "./blog-table-of-contents"
 import { BlogSidebar } from "./blog-sidebar"
+import { ShareButtons } from "./share-buttons"
 import type { BlogPost } from "@/lib/blog"
 
 interface BlogPostViewProps {
@@ -17,21 +15,6 @@ interface BlogPostViewProps {
 }
 
 export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
-
-  const handleShare = (platform: string) => {
-    const url = window.location.href
-    const text = post.title
-
-    const shareUrls = {
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-    }
-
-    if (shareUrls[platform as keyof typeof shareUrls]) {
-      window.open(shareUrls[platform as keyof typeof shareUrls], "_blank", "width=600,height=400")
-    }
-  }
 
   return (
     <>
@@ -51,24 +34,18 @@ export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
 
           {/* Cover Image */}
           {(post.coverImage || post.featuredImage) && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-              className="relative w-full h-64 md:h-96 mb-10 rounded-2xl overflow-hidden bg-muted"
-            >
+            <div className="relative w-full h-64 md:h-96 mb-10 rounded-2xl overflow-hidden bg-muted">
               <img
                 src={post.coverImage || post.featuredImage}
                 alt={`${post.title} - Cover image`}
                 className="w-full h-full object-cover"
                 loading="eager"
                 fetchPriority="high"
-                onError={(e) => {
-                  // Hide image if it fails to load
-                  e.currentTarget.style.display = 'none'
-                }}
+                decoding="async"
+                width={1200}
+                height={630}
               />
-            </motion.div>
+            </div>
           )}
 
           <header
@@ -105,37 +82,8 @@ export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
               </div>
 
               {/* Share Section */}
-              <div className="flex items-center gap-2 ml-auto">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Share</span>
-                <div className="flex items-center gap-0.5">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleShare("twitter")}
-                    aria-label="Share on Twitter"
-                    className="h-8 w-8 p-0 hover:bg-primary/10 rounded-md"
-                  >
-                    <Twitter className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleShare("facebook")}
-                    aria-label="Share on Facebook"
-                    className="h-8 w-8 p-0 hover:bg-primary/10 rounded-md"
-                  >
-                    <Facebook className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleShare("linkedin")}
-                    aria-label="Share on LinkedIn"
-                    className="h-8 w-8 p-0 hover:bg-primary/10 rounded-md"
-                  >
-                    <Linkedin className="h-4 w-4" />
-                  </Button>
-                </div>
+              <div className="ml-auto">
+                <ShareButtons title={post.title} />
               </div>
             </div>
           </header>
@@ -188,14 +136,7 @@ export function BlogPostView({ post, relatedPosts }: BlogPostViewProps) {
               <h2 className="heading-3 mb-8 text-gradient-primary">Related Articles</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {relatedPosts.map((relatedPost) => (
-                  <motion.div
-                    key={relatedPost.slug}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                  >
-                    <BlogCard post={relatedPost} />
-                  </motion.div>
+                  <BlogCard key={relatedPost.slug} post={relatedPost} />
                 ))}
               </div>
             </div>

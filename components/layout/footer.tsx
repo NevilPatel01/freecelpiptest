@@ -316,7 +316,7 @@ export function Footer() {
             </Dialog>
 
             {/* Social Links */}
-            <div className="flex gap-4">
+            {/* <div className="flex gap-4">
               {socialLinks.map((social) => {
                 const Icon = social.icon
                 return (
@@ -330,7 +330,7 @@ export function Footer() {
                   </a>
                 )
               })}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

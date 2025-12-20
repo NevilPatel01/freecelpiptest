@@ -1,13 +1,7 @@
-"use client"
-
-import { motion } from "framer-motion"
-import { useRef } from "react"
-import { useInView } from "framer-motion"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Clock } from "lucide-react"
-import { cardItem } from "@/lib/animations"
 
 // Placeholder blog posts - will be replaced with actual data from markdown files
 const featuredPosts = [
@@ -35,18 +29,10 @@ const featuredPosts = [
 ]
 
 export function FeaturedBlog() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
-
   return (
-    <section ref={ref} className="section-padding bg-muted/30">
+    <section className="section-padding bg-muted/30">
       <div className="container mx-auto container-padding">
-        <motion.div
-          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             <h2 className="heading-2 mb-2 text-gradient-primary">Latest Study Tips</h2>
             <p className="text-base text-muted-foreground">
@@ -59,49 +45,42 @@ export function FeaturedBlog() {
               <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />
             </Link>
           </Button>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {featuredPosts.map((post, index) => (
-            <motion.div
-              key={post.slug}
-              initial={cardItem(index).initial}
-              animate={isInView ? cardItem(index).animate : cardItem(index).initial}
-              transition={cardItem(index).transition}
-            >
-              <Card className="card-hover h-full flex flex-col card-elevated">
-                <CardHeader className="pb-3">
-                  <div className="inline-block px-2 py-0.5 rounded-md text-xs font-semibold gradient-primary text-white mb-2.5 shadow-sm">
-                    {post.category}
+          {featuredPosts.map((post) => (
+            <Card key={post.slug} className="card-hover h-full flex flex-col card-elevated">
+              <CardHeader className="pb-3">
+                <div className="inline-block px-2 py-0.5 rounded-md text-xs font-semibold gradient-primary text-white mb-2.5 shadow-sm">
+                  {post.category}
+                </div>
+                <CardTitle className="text-base font-semibold mb-1.5 leading-tight">
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="hover:text-primary transition-colors"
+                  >
+                    {post.title}
+                  </Link>
+                </CardTitle>
+                <CardDescription className="line-clamp-2 text-sm leading-relaxed">
+                  {post.excerpt}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="mt-auto pt-0">
+                <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span>{post.readingTime} min</span>
                   </div>
-                  <CardTitle className="text-base font-semibold mb-1.5 leading-tight">
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="hover:text-primary transition-colors"
-                    >
-                      {post.title}
+                  <Button variant="ghost" size="sm" className="h-7 text-xs" asChild>
+                    <Link href={`/blog/${post.slug}`} className="flex items-center">
+                      Read
+                      <ArrowRight className="ml-1.5 h-3 w-3" />
                     </Link>
-                  </CardTitle>
-                  <CardDescription className="line-clamp-2 text-sm leading-relaxed">
-                    {post.excerpt}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="mt-auto pt-0">
-                  <div className="flex items-center justify-between pt-3 border-t border-border/50">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>{post.readingTime} min</span>
-                    </div>
-                    <Button variant="ghost" size="sm" className="h-7 text-xs" asChild>
-                      <Link href={`/blog/${post.slug}`} className="flex items-center">
-                        Read
-                        <ArrowRight className="ml-1.5 h-3 w-3" />
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

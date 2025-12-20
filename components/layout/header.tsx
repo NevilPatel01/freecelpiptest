@@ -63,6 +63,10 @@ export function Header() {
             className="h-8 md:h-10 w-auto"
             style={{ maxWidth: '140px' }}
             loading="eager"
+            fetchPriority="high"
+            width="140"
+            height="40"
+            decoding="async"
           />
         </Link>
         

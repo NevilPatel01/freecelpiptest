@@ -8,6 +8,9 @@ export const metadata = {
   description: "Expert CELPIP study tips, strategies, and guides for all test sections. Learn from proven techniques to improve your score.",
 }
 
+// Revalidate every hour for new blog posts
+export const revalidate = 3600
+
 export default async function BlogPage() {
   const posts = await getAllBlogPosts()
 
