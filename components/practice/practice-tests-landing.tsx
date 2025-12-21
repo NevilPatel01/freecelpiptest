@@ -85,7 +85,7 @@ export function PracticeTestsLanding() {
                       <span className="font-semibold text-foreground">0%</span>
                     </div>
                     <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className={`h-full ${section.gradient} rounded-full transition-all duration-500`} style={{ width: "0%" }} />
+                      <div className={`h-full ${section.gradient} rounded-full transition-all duration-500 progress-bar-width-0`} />
                     </div>
                   </div>
                   <Button className="w-full whitespace-nowrap" asChild>

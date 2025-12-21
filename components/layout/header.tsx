@@ -60,8 +60,7 @@ export function Header() {
           <img
             src="/assets/logo-bg.png"
             alt="FreeCELPIPTest"
-            className="h-8 md:h-10 w-auto"
-            style={{ maxWidth: '140px' }}
+            className="h-8 md:h-10 w-auto logo-max-width"
             loading="eager"
             fetchPriority="high"
             width="140"

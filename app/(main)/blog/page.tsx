@@ -6,6 +6,9 @@ import { BlogListingSkeleton } from "@/components/blog/blog-listing-skeleton"
 export const metadata = {
   title: "CELPIP Study Tips & Blog | FreeCELPIPTest",
   description: "Expert CELPIP study tips, strategies, and guides for all test sections. Learn from proven techniques to improve your score.",
+  alternates: {
+    canonical: "/blog",
+  },
 }
 
 // Revalidate every hour for new blog posts

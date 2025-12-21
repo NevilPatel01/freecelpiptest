@@ -215,7 +215,7 @@ export function MockTestsDashboard() {
                   <span className="font-semibold text-foreground">1 / 10 questions</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full gradient-primary rounded-full transition-all duration-500" style={{ width: "10%" }} />
+                  <div className="h-full gradient-primary rounded-full transition-all duration-500 progress-bar-width-10" />
                 </div>
               </div>
 

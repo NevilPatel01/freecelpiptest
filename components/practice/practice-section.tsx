@@ -306,7 +306,7 @@ export function PracticeSection({ section }: PracticeSectionProps) {
                   <span>0%</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full" style={{ width: "0%" }} />
+                  <div className="h-full bg-primary rounded-full progress-bar-width-0" />
                 </div>
               </div>
               <div className="text-sm space-y-2">

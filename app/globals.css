@@ -397,5 +397,18 @@
   .transition-fast {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  /* Utility classes for removed inline styles */
+  .logo-max-width {
+    max-width: 140px;
+  }
+
+  .progress-bar-width-0 {
+    width: 0%;
+  }
+
+  .progress-bar-width-10 {
+    width: 10%;
+  }
 }
 

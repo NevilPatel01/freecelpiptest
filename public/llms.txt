@@ -1,0 +1,32 @@
+# FreeCELPIPTest - LLM Information
+
+## Site Purpose
+FreeCELPIPTest is a comprehensive CELPIP (Canadian English Language Proficiency Index Program) test preparation platform providing free practice tests, study guides, and expert tips for all four test sections: Listening, Reading, Writing, and Speaking.
+
+## About CELPIP
+CELPIP is a Canadian English language assessment test recognized by Immigration, Refugees and Citizenship Canada (IRCC) for immigration and citizenship purposes. The test evaluates English language proficiency across four sections, with scores reported on a scale of 1-12 corresponding to Canadian Language Benchmark (CLB) levels.
+
+## Site Content
+- Free CELPIP practice tests and sample questions
+- Comprehensive study guides and strategies
+- Expert tips for each test section
+- Score calculator to estimate CLB levels
+- Vocabulary level grader
+- Blog articles with detailed preparation strategies
+
+## Target Audience
+International students, immigrants, and individuals preparing for Canadian immigration or citizenship who need to demonstrate English language proficiency through the CELPIP test.
+
+## Key Features
+- Practice tests for Listening, Reading, Writing, and Speaking sections
+- Study resources and guides
+- Expert strategies and tips
+- Score calculation tools
+- Free access to all materials
+
+## Contact
+For questions or support, visit: https://freecelpiptest.com/contact
+
+## Disclaimer
+FreeCELPIPTest is not affiliated with, endorsed by, or connected to CELPIP or Paragon Testing Enterprises. We are an independent educational resource providing practice materials and study guides.
+

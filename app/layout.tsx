@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { WebsiteSchema } from "@/components/seo/website-schema";
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -15,7 +17,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://freecelpiptest.com"),
   title: {
-    default: "FreeCELPIPTest - Master CELPIP with Free Practice Tests & Expert Tips",
+    default: "FreeCELPIPTest - CELPIP Practice Tests & Expert Tips",
     template: "%s | FreeCELPIPTest",
   },
   description: "Comprehensive CELPIP test preparation platform with practice tests, study guides, and expert tips for all 4 test sections to help you achieve your target score.",
@@ -67,6 +69,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  alternates: {
+    canonical: "https://freecelpiptest.com",
+  },
   verification: {
     google: "your-google-verification-code",
   },
@@ -83,8 +88,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <WebsiteSchema />
       </head>
       <body className={inter.variable}>
+        <GoogleAnalytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
