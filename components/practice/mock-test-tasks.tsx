@@ -85,7 +85,7 @@ export function MockTestTasks() {
         transition={sectionHeader.transition}
       >
         <h1 className="heading-2 mb-3 text-gradient-primary">Mock Tests</h1>
-        <p className="text-base text-muted-foreground max-w-2xl leading-relaxed">
+        <p className="text-base text-muted-foreground max-w-4xl leading-relaxed">
           Select a task to practice individual sections. Choose from Listening, Reading, Writing, and Speaking tasks.
         </p>
       </motion.div>
