@@ -1,0 +1,297 @@
+name: Azure AKS Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AZURE_LOCATION: canadacentral
+  NODE_VERSION: '20.x'
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
+jobs:
+  # Job 1: Lint and Test
+  test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+  # Job 2: Security Scan
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Job 3: Build and Push Docker Image
+  build:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: [test, security]
+    if: github.event_name != 'pull_request'
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get ACR credentials
+        id: acr-creds
+        run: |
+          ACR_NAME=$(az acr list --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "[0].name" -o tsv)
+          echo "ACR_NAME=$ACR_NAME" >> $GITHUB_OUTPUT
+          echo "ACR_LOGIN_SERVER=$ACR_NAME.azurecr.io" >> $GITHUB_OUTPUT
+
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ steps.acr-creds.outputs.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.AZURE_CLIENT_ID }}
+          password: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.acr-creds.outputs.ACR_LOGIN_SERVER }}/freecelpip
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./azure/Dockerfile.production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ steps.acr-creds.outputs.ACR_LOGIN_SERVER }}/freecelpip:buildcache
+          cache-to: type=registry,ref=${{ steps.acr-creds.outputs.ACR_LOGIN_SERVER }}/freecelpip:buildcache,mode=max
+          platforms: linux/amd64
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.acr-creds.outputs.ACR_LOGIN_SERVER }}/freecelpip:latest
+          format: 'sarif'
+          output: 'trivy-image-results.sarif'
+
+  # Job 4: Deploy to Development
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment:
+      name: development
+      url: https://dev.freecelpiptest.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --name ${{ secrets.AZURE_AKS_CLUSTER_NAME }} \
+            --overwrite-existing
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Create namespace
+        run: |
+          kubectl create namespace freecelpip --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Sync secrets from Key Vault
+        run: |
+          az keyvault secret download \
+            --vault-name ${{ secrets.AZURE_KEY_VAULT_NAME }} \
+            --name DATABASE-URL \
+            --file /tmp/db-url
+
+          kubectl create secret generic freecelpip-secrets \
+            --from-file=DATABASE_URL=/tmp/db-url \
+            --namespace freecelpip \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          rm /tmp/db-url
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install freecelpip ./azure/helm/freecelpip \
+            --namespace freecelpip \
+            --set image.repository=${{ secrets.ACR_LOGIN_SERVER }}/freecelpip \
+            --set image.tag=${{ github.sha }} \
+            --set ingress.hosts[0].host=dev.freecelpiptest.com \
+            --wait --timeout 10m
+
+      - name: Run database migrations
+        run: |
+          kubectl run prisma-migrate-${{ github.sha }} \
+            --image=${{ secrets.ACR_LOGIN_SERVER }}/freecelpip:${{ github.sha }} \
+            --namespace=freecelpip \
+            --restart=Never \
+            --env="DATABASE_URL=${{ secrets.DATABASE_URL }}" \
+            --command -- npx prisma migrate deploy
+
+          kubectl wait --for=condition=complete --timeout=300s \
+            job/prisma-migrate-${{ github.sha }} \
+            --namespace=freecelpip
+
+  # Job 5: Deploy to Production
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://freecelpiptest.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --name ${{ secrets.AZURE_AKS_CLUSTER_NAME }} \
+            --overwrite-existing
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Create namespace
+        run: |
+          kubectl create namespace freecelpip --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install freecelpip ./azure/helm/freecelpip \
+            --namespace freecelpip \
+            --set image.repository=${{ secrets.ACR_LOGIN_SERVER }}/freecelpip \
+            --set image.tag=${{ github.sha }} \
+            --set replicaCount=3 \
+            --set autoscaling.minReplicas=2 \
+            --set autoscaling.maxReplicas=10 \
+            --wait --timeout 10m
+
+      - name: Run database migrations
+        run: |
+          kubectl run prisma-migrate-${{ github.sha }} \
+            --image=${{ secrets.ACR_LOGIN_SERVER }}/freecelpip:${{ github.sha }} \
+            --namespace=freecelpip \
+            --restart=Never \
+            --env="DATABASE_URL=${{ secrets.DATABASE_URL }}" \
+            --command -- npx prisma migrate deploy
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/freecelpip -n freecelpip --timeout=5m
+          kubectl get pods -n freecelpip -l app=freecelpip
+
+  # Job 6: Smoke Tests
+  smoke-test:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-prod]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Health check
+        run: |
+          for i in {1..10}; do
+            STATUS=$(curl -s -o /dev/null -w '%{http_code}' https://freecelpiptest.com/api/health)
+            if [ $STATUS -eq 200 ]; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying..."
+            sleep 10
+          done
+          echo "Health check failed after 10 attempts"
+          exit 1
+
+      - name: Test homepage
+        run: |
+          STATUS=$(curl -s -o /dev/null -w '%{http_code}' https://freecelpiptest.com)
+          if [ $STATUS -ne 200 ]; then
+            echo "Homepage check failed with status $STATUS"
+            exit 1
+          fi
+          echo "Homepage is accessible"

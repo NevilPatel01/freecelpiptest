@@ -41,4 +41,8 @@ next-env.d.ts
 
 
 /generated/prisma
+
 public/assets/
+/public/assets/UI
+
+docs/

@@ -29,7 +29,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   
   // Static generation
-  output: 'standalone', // For Digital Ocean App Platform deployment
+  output: 'standalone', // For containerized deployment (Docker/AKS)
+  
+  // Environment variables for runtime
+  env: {
+    APPLICATIONINSIGHTS_CONNECTION_STRING: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING || '',
+  },
   
   // Headers for caching
   async headers() {

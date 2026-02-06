@@ -1,0 +1,14 @@
+{
+    "resourcesResourceGroups": "rg-",
+    "containerRegistryRegistries": "cr",
+    "keyVaultVaults": "kv-",
+    "managedIdentityUserAssignedIdentities": "id-",
+    "operationalInsightsWorkspaces": "log-",
+    "insightsComponents": "appi-",
+    "containerServiceManagedClusters": "aks-",
+    "networkVirtualNetworks": "vnet-",
+    "networkNetworkSecurityGroups": "nsg-",
+    "networkApplicationGateways": "agw-",
+    "networkPublicIPAddresses": "pip-",
+    "dBforPostgreSQLServers": "psql-"
+}
