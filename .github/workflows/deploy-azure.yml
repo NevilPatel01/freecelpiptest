@@ -198,20 +198,6 @@ jobs:
         run: |
           kubectl create namespace freecelpip --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Sync secrets from Key Vault
-        run: |
-          az keyvault secret download \
-            --vault-name ${{ secrets.AZURE_KEY_VAULT_NAME }} \
-            --name DATABASE-URL \
-            --file /tmp/db-url
-
-          kubectl create secret generic freecelpip-secrets \
-            --from-file=DATABASE_URL=/tmp/db-url \
-            --namespace freecelpip \
-            --dry-run=client -o yaml | kubectl apply -f -
-
-          rm /tmp/db-url
-
       - name: Deploy with Helm
         run: |
           helm upgrade --install freecelpip ./azure/helm/freecelpip \
@@ -219,6 +205,10 @@ jobs:
             --set image.repository=${{ needs.build.outputs.acr-login-server }}/freecelpip \
             --set image.tag=${{ github.sha }} \
             --set ingress.hosts[0].host=dev.freecelpiptest.com \
+            --set keyVault.enabled=true \
+            --set keyVault.name=${{ secrets.AZURE_KEY_VAULT_NAME }} \
+            --set keyVault.tenantId=${{ secrets.AZURE_TENANT_ID }} \
+            --set keyVault.clientId=feecb02a-b5a3-4e4b-8e62-1d8d3f1d9cd9 \
             --wait --timeout 10m
 
       - name: Run database migrations
@@ -278,6 +268,10 @@ jobs:
             --set replicaCount=3 \
             --set autoscaling.minReplicas=2 \
             --set autoscaling.maxReplicas=10 \
+            --set keyVault.enabled=true \
+            --set keyVault.name=${{ secrets.AZURE_KEY_VAULT_NAME }} \
+            --set keyVault.tenantId=${{ secrets.AZURE_TENANT_ID }} \
+            --set keyVault.clientId=feecb02a-b5a3-4e4b-8e62-1d8d3f1d9cd9 \
             --wait --timeout 10m
 
       - name: Run database migrations
