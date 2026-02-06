@@ -138,6 +138,8 @@ keyVault:
       key: NEXTAUTH-SECRET
     - name: NEXTAUTH_URL
       value: "https://freecelpiptest.com"
+    - name: ADMIN_EMAIL
+      key: ADMIN-EMAIL
     - name: APPLICATIONINSIGHTS_CONNECTION_STRING
       key: APPLICATIONINSIGHTS-CONNECTION-STRING
 
