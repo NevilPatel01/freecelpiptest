@@ -1,203 +1,119 @@
 # FreeCELPIPTest Platform
 
-A comprehensive Next.js 15 website for free CELPIP test preparation with neomorphic design, Google OAuth authentication, and markdown-based blog system.
+FreeCELPIPTest is a production-grade, real-world learning platform for CELPIP candidates. It blends a polished learning experience with a serious cloud architecture: Next.js 15 on AKS, Key Vault–backed secrets, PostgreSQL, and full CI/CD with azd.
 
-## Features
+This repository is also my Azure DevOps portfolio piece. It is intentionally end-to-end: frontend, backend, infra, security, and deployment automation in one place.
 
-- 🎨 **Neomorphic Design** - Modern, soft UI with embossed shadows and gradients
-- 🌙 **Dark Mode** - Full dark mode support with theme persistence
-- 📱 **Responsive** - Mobile-first design, fully responsive across all devices
-- 🚀 **Next.js 15** - Built with App Router, TypeScript, and latest features
-- 🔐 **Google OAuth** - Secure authentication with NextAuth.js
-- 📝 **Markdown Blog** - Easy-to-manage blog system with markdown files
-- 🎯 **Practice Tests** - Mock interfaces for all 4 CELPIP sections
-- ♿ **Accessible** - WCAG 2.1 AA compliant with proper ARIA labels
-- 🔍 **SEO Optimized** - Meta tags, Open Graph, structured data, sitemap
-- ⚡ **Performance** - Optimized images, lazy loading, code splitting
+## Why This Project Matters
 
-## Tech Stack
+- Real users, real needs: practice tests, guided prep, and a learning-first UX
+- Cloud-native by design: autoscaling, secrets, and zero-trust patterns
+- Production workflow: CI/CD, observability, and reliable releases
 
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS with custom neomorphic utilities
-- **UI Components**: shadcn/ui
-- **Animations**: Framer Motion
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: NextAuth.js (Google OAuth)
-- **Content**: Markdown files with remark
+## Highlights
 
-## Getting Started
+- Next.js 15 App Router with TypeScript
+- AKS deployment via azd and Helm
+- Azure Key Vault + CSI driver for secrets
+- PostgreSQL Flexible Server with private networking
+- Application Insights for telemetry
+- NGINX Ingress + cert-manager for HTTPS
+- Mobile-first, accessible UI
+
+## Architecture (Short Explanation)
+
+Users reach the platform through DNS and an Azure Load Balancer. Traffic lands on NGINX Ingress in AKS, routes through Kubernetes Services, and hits the Next.js pods. Secrets are pulled securely from Azure Key Vault using the CSI driver, while the app talks to PostgreSQL over private networking. Telemetry flows into Application Insights, and container images come from ACR.
+
+```mermaid
+flowchart TB
+   user[User Browser] --> dns[DNS: freecelpiptest.com]
+   dns --> lb[Azure Load Balancer]
+   lb --> nginx[NGINX Ingress Controller]
+   nginx --> ingress[Ingress: freecelpip]
+   ingress --> svc[Service: freecelpip]
+   svc --> pods[Pods: Next.js App]
+
+   subgraph AKS[Azure Kubernetes Service]
+      nginx
+      ingress
+      svc
+      pods
+      csi[Secrets Store CSI Driver]
+   end
+
+   pods -->|ENV from SecretProviderClass| csi
+   csi --> kv[Azure Key Vault]
+
+   pods -->|DB connection| pg[Azure PostgreSQL Flexible Server]
+   pods -->|Telemetry| ai[Application Insights]
+
+   subgraph AzureInfra[Azure Infrastructure]
+      acr[Azure Container Registry]
+      kv
+      pg
+      ai
+   end
+
+   acr -->|Image pull| pods
+```
+
+## Local Development
 
 ### Prerequisites
 
-- Node.js 18+ 
-- PostgreSQL database (or use Supabase/Neon for easy setup)
+- Node.js 18+
+- PostgreSQL database
 - Google OAuth credentials
 
-### Installation
+### Setup
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd FreeCelpipTest
-```
-
-2. Install dependencies:
 ```bash
 npm install
-```
-
-3. Set up environment variables:
-```bash
 cp .env.example .env
 ```
 
-Edit `.env` and add your:
-- `DATABASE_URL` - PostgreSQL connection string
-- `NEXTAUTH_URL` or `AUTH_URL` - Your app URL (http://localhost:3000 for local)
-- `NEXTAUTH_SECRET` or `AUTH_SECRET` - Generate with `openssl rand -base64 32`
-- `GOOGLE_CLIENT_ID` or `CLIENT_ID` - From Google Cloud Console
-- `GOOGLE_CLIENT_SECRET` or `CLIENT_SECRET` - From Google Cloud Console
-- `REDIRECT_URI` or `GOOGLE_REDIRECT_URI` (optional) - Custom redirect URI. If not set, defaults to `{AUTH_URL}/api/auth/callback/google`
+Populate `.env` with your values, then:
 
-4. Set up the database:
 ```bash
 npx prisma generate
 npx prisma db push
-```
-
-5. Run the development server:
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Deploy to Azure (azd)
+
+This repo is wired for azd. The full production workflow is documented here:
+
+- [azure/README.md](azure/README.md)
+  
+Fast path:
+
+```bash
+azd auth login
+azd env new dev
+azd up
+```
 
 ## Project Structure
 
 ```
 FreeCelpipTest/
 ├── app/                    # Next.js App Router
-│   ├── (main)/            # Main pages
-│   ├── api/               # API routes
-│   ├── dashboard/         # User dashboard
-│   └── layout.tsx         # Root layout
-├── components/            # React components
-│   ├── ui/               # shadcn/ui components
-│   ├── layout/           # Header, Footer, Navigation
-│   ├── sections/         # Page sections
-│   ├── blog/             # Blog components
-│   └── practice/         # Practice test components
-├── lib/                   # Utilities
-│   ├── auth.ts           # NextAuth config
-│   ├── prisma.ts         # Prisma client
-│   └── blog.ts           # Blog utilities
-├── content/              # Markdown blog posts
-│   └── blog/
-├── prisma/               # Prisma schema
-└── public/               # Static assets
+├── components/             # UI + sections + layout
+├── azure/                  # Azure infra, Helm, and deployment scripts
+├── prisma/                 # Prisma schema
+└── public/                 # Static assets
 ```
 
-## Available Scripts
+## Showcase Notes
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run db:generate` - Generate Prisma client
-- `npm run db:push` - Push schema to database
-- `npm run db:migrate` - Run database migrations
-- `npm run db:studio` - Open Prisma Studio
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Import project in Vercel
-3. Add environment variables
-4. Deploy!
-
-### Database Setup
-
-For production, use a managed PostgreSQL service:
-- **Supabase** (Free tier available)
-- **Neon** (Serverless PostgreSQL)
-- **Railway** (Easy setup)
-
-### Google OAuth Setup
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URIs:
-   - `http://localhost:3000/api/auth/callback/google` (development)
-   - `https://yourdomain.com/api/auth/callback/google` (production)
-
-## Features in Detail
-
-### Pages
-
-- **Home** - Hero section, value propositions, featured blog, testimonials
-- **Practice Tests** - Landing page and individual section pages
-- **Mock Tests** - Full-length test simulation
-- **Blog** - Markdown-based blog with search and filters
-- **Getting Started** - Step-by-step guide for new users
-- **About CELPIP** - Test format, scoring, test day tips
-- **Resources** - Downloadable guides and study materials
-- **Testimonials** - Success stories from students
-- **Contact** - Contact form and FAQ
-
-### Authentication
-
-- Google OAuth only (no email/password)
-- User dashboard with saved articles and preferences
-- Session management with NextAuth.js
-
-### Blog System
-
-- Markdown files in `/content/blog/`
-- Automatic reading time calculation
-- Category and tag filtering
-- Search functionality
-- Related articles
-- Social sharing
-
-## Customization
-
-### Adding Blog Posts
-
-Create a new markdown file in `content/blog/`:
-
-```markdown
----
-title: "Your Post Title"
-excerpt: "Brief description"
-category: "Category Name"
-tags: ["tag1", "tag2"]
-publishedAt: "2024-01-01"
-featuredImage: "/images/blog/image.jpg"
----
-
-Your content here...
-```
-
-### Neomorphic Design
-
-Custom utilities are defined in `app/globals.css`:
-- `neu-flat` - Flat neomorphic shadow
-- `neu-pressed` - Pressed/inset shadow
-- `neu-raised` - Raised/embossed shadow
-- `neu-glow` - Hover glow effect
-
-## License
-
-This project is open source and available for use.
+- This project emphasizes reliability: pod disruption budgets, rolling updates, and HPA.
+- Security is a first-class citizen: Key Vault, managed identity, private DB networking.
+- The UI is practical and human-first, built for real learners.
 
 ## Disclaimer
 
-This website is NOT affiliated with or endorsed by CELPIP. We are an independent study resource providing free practice materials.
+This website is not affiliated with or endorsed by CELPIP. It is an independent study resource built for learners.
 
 ## Support
 

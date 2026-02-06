@@ -1,0 +1,15 @@
+apiVersion: v2
+name: freecelpip
+description: A Helm chart for FreeCelpip Next.js application on Azure AKS
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - nextjs
+  - education
+  - celpip
+maintainers:
+  - name: FreeCelpip Team
+home: https://freecelpiptest.com
+sources:
+  - https://github.com/yourusername/freecelpip
