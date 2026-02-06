@@ -1,7 +1,7 @@
 # Default values for freecelpip
 # This is a YAML-formatted file.
 
-replicaCount: 3
+replicaCount: 1
 
 image:
   repository: "" # Will be set by AZD
@@ -68,16 +68,16 @@ ingress:
 
 resources:
   limits:
-    cpu: 1000m
-    memory: 1024Mi
-  requests:
-    cpu: 250m
+    cpu: 500m
     memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
 
 autoscaling:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 10
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 80
 

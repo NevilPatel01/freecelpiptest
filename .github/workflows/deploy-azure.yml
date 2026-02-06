@@ -204,7 +204,6 @@ jobs:
             --namespace freecelpip \
             --set image.repository=${{ needs.build.outputs.acr-login-server }}/freecelpip \
             --set image.tag=main-${GITHUB_SHA:0:7} \
-            --set replicaCount=1 \
             --set autoscaling.enabled=false \
             --set ingress.hosts[0].host=dev.freecelpiptest.com \
             --set keyVault.enabled=true \
@@ -212,6 +211,7 @@ jobs:
             --set-string keyVault.tenantId="${{ secrets.AZURE_TENANT_ID }}" \
             --set-string keyVault.clientId="feecb02a-b5a3-4e4b-8e62-1d8d3f1d9cd9" \
             --set-string adminEmail="${{ secrets.ADMIN_EMAIL }}" \
+            --history-max 3 \
             --wait --timeout 10m
 
       - name: Run database migrations
@@ -262,35 +262,19 @@ jobs:
         run: |
           kubectl create namespace freecelpip --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Verify Key Vault secrets are set
-        run: |
-          if [ -z "${{ secrets.AZURE_KEY_VAULT_NAME }}" ]; then
-            echo "ERROR: AZURE_KEY_VAULT_NAME is not set"
-            exit 1
-          fi
-          if [ -z "${{ secrets.AZURE_TENANT_ID }}" ]; then
-            echo "ERROR: AZURE_TENANT_ID is not set"
-            exit 1
-          fi
-          echo "Key Vault name length: ${#KV_NAME}"
-          echo "Tenant ID length: ${#TENANT_ID}"
-        env:
-          KV_NAME: ${{ secrets.AZURE_KEY_VAULT_NAME }}
-          TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-
       - name: Deploy with Helm
         run: |
           helm upgrade --install freecelpip ./azure/helm/freecelpip \
             --namespace freecelpip \
             --set image.repository=${{ needs.build.outputs.acr-login-server }}/freecelpip \
             --set image.tag=main-${GITHUB_SHA:0:7} \
-            --set replicaCount=2 \
             --set autoscaling.enabled=false \
             --set keyVault.enabled=true \
             --set-string keyVault.name="${{ secrets.AZURE_KEY_VAULT_NAME }}" \
             --set-string keyVault.tenantId="${{ secrets.AZURE_TENANT_ID }}" \
             --set-string keyVault.clientId="feecb02a-b5a3-4e4b-8e62-1d8d3f1d9cd9" \
             --set-string adminEmail="${{ secrets.ADMIN_EMAIL }}" \
+            --history-max 3 \
             --wait --timeout 10m
 
       - name: Run database migrations
