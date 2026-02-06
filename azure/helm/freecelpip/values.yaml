@@ -122,6 +122,9 @@ env:
   NEXT_TELEMETRY_DISABLED: "1"
   PORT: "3000"
 
+# Admin email (set via --set in CI/CD)
+adminEmail: ""
+
 # Secrets from Azure Key Vault
 keyVault:
   enabled: true
@@ -139,8 +142,6 @@ keyVault:
       key: NEXTAUTH-SECRET
     - name: NEXTAUTH_URL
       value: "https://freecelpiptest.com"
-    - name: ADMIN_EMAIL
-      value: ""
     - name: APPLICATIONINSIGHTS_CONNECTION_STRING
       key: APPLICATIONINSIGHTS-CONNECTION-STRING
 

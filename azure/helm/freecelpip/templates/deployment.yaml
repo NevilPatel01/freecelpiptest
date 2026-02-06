@@ -52,6 +52,10 @@ spec:
         - name: {{ $key }}
           value: {{ $value | quote }}
         {{- end }}
+        {{- if .Values.adminEmail }}
+        - name: ADMIN_EMAIL
+          value: {{ .Values.adminEmail | quote }}
+        {{- end }}
         {{- if .Values.keyVault.enabled }}
         {{- range .Values.keyVault.secrets }}
         - name: {{ .name }}
