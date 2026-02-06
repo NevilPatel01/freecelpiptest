@@ -1,4 +1,4 @@
-import { ComingSoon } from "@/components/ui/coming-soon"
+import { PracticeTestsLanding } from "@/components/practice/practice-tests-landing"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -26,37 +26,6 @@ export const metadata: Metadata = {
 }
 
 export default function PracticeTestsPage() {
-  return (
-    <ComingSoon
-      title="CELPIP Practice Tests - Coming Soon"
-      description="We're building comprehensive practice tests for all four CELPIP sections. Our practice tests will include realistic questions, detailed explanations, and progress tracking to help you prepare effectively."
-      features={[
-        "Realistic practice questions for all 4 sections",
-        "Audio recordings for listening practice",
-        "Detailed answer explanations and feedback",
-        "Progress tracking and performance analytics",
-        "Timed practice sessions matching real test format",
-        "Study guides and tips for each section",
-      ]}
-      showNewsletter={true}
-      relatedLinks={[
-        {
-          name: "Study Guides & Tips",
-          href: "/blog",
-          description: "Read expert tips and strategies for each CELPIP section",
-        },
-        {
-          name: "About CELPIP Test",
-          href: "/resources#understanding-celpip",
-          description: "Learn about test format, scoring, and what to expect",
-        },
-        {
-          name: "Score Calculator",
-          href: "/celpip-score-calculator",
-          description: "Calculate your CLB level and understand scoring",
-        },
-      ]}
-    />
-  )
+  return <PracticeTestsLanding />
 }
 
