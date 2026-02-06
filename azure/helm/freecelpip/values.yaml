@@ -127,6 +127,7 @@ keyVault:
   enabled: true
   name: "" # Will be set by deployment
   tenantId: "" # Will be set by deployment
+  clientId: "" # Will be set by deployment
   secrets:
     - name: DATABASE_URL
       key: DATABASE-URL
