@@ -18,6 +18,7 @@ permissions:
   id-token: write
   contents: read
   packages: write
+  security-events: write
 
 jobs:
   # Job 1: Lint and Test
@@ -62,7 +63,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
@@ -132,6 +133,13 @@ jobs:
           image-ref: ${{ steps.acr-creds.outputs.ACR_LOGIN_SERVER }}/freecelpip:latest
           format: 'sarif'
           output: 'trivy-image-results.sarif'
+
+      - name: Upload Docker image scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-image-results.sarif'
+          category: 'docker-image'
 
   # Job 4: Deploy to Development
   deploy-dev:
