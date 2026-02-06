@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { Clock, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BlogPostStructuredData } from "./structured-data"
 import { BlogCard } from "./blog-card"
 import { BlogTableOfContents } from "./blog-table-of-contents"

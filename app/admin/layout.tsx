@@ -1,5 +1,4 @@
 import { requireAdmin } from '@/lib/admin';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Home, Mail, MessageSquare, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';

@@ -1,15 +1,21 @@
 import type { Metadata } from "next"
-import { TestimonialsPage } from "@/components/sections/testimonials-page"
+import { ComingSoon } from "@/components/ui/coming-soon"
 
 export const metadata: Metadata = {
-  title: "CELPIP Success Stories | FreeCELPIPTest",
-  description: "Read success stories from students who achieved their CELPIP goals using our free practice materials and study resources.",
+  title: "Testimonials Coming Soon | FreeCELPIPTest",
+  description: "Student testimonials and success stories will be added soon. Check back later!",
   alternates: {
     canonical: "/testimonials",
   },
 }
 
 export default function TestimonialsPageRoute() {
-  return <TestimonialsPage />
+  return (
+    <ComingSoon
+      title="Testimonials Coming Soon"
+      description="We'll be adding real student testimonials and success stories once we have verified feedback from CELPIP test takers."
+      showNewsletter={false}
+    />
+  )
 }
 

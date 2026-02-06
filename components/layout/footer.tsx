@@ -2,10 +2,9 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Mail, Facebook, Twitter, Instagram, Youtube, MessageSquare, Star, X } from "lucide-react"
+import { Mail, MessageSquare, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -50,7 +49,7 @@ export function Footer() {
       } else {
         setMessage({ type: "error", text: "Something went wrong. Please try again." })
       }
-    } catch (error) {
+    } catch {
       setMessage({ type: "error", text: "Something went wrong. Please try again." })
     } finally {
       setIsSubmitting(false)
@@ -81,7 +80,7 @@ export function Footer() {
       } else {
         setFeedbackMessage({ type: "error", text: data.error || "Something went wrong. Please try again." })
       }
-    } catch (error) {
+    } catch {
       setFeedbackMessage({ type: "error", text: "Something went wrong. Please try again." })
     } finally {
       setIsSubmittingFeedback(false)
@@ -105,13 +104,6 @@ export function Footer() {
       { name: "Contact", href: "/contact" },
     ],
   }
-
-  const socialLinks = [
-    { name: "Facebook", icon: Facebook, href: "#" },
-    { name: "Twitter", icon: Twitter, href: "#" },
-    { name: "Instagram", icon: Instagram, href: "#" },
-    { name: "YouTube", icon: Youtube, href: "#" },
-  ]
 
   return (
     <footer className="border-t border-border/50 bg-background">

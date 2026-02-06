@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import { HeroSection } from "@/components/sections/hero-section"
 import { ValueProposition } from "@/components/sections/value-proposition"
-import { FeaturedBlog } from "@/components/sections/featured-blog"
 import { AboutContent } from "@/components/sections/about-content"
 import { OrganizationSchema } from "@/components/seo/organization-schema"
 import dynamic from "next/dynamic"

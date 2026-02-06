@@ -3,9 +3,9 @@
 import { motion } from "framer-motion"
 import { useRef } from "react"
 import { useInView } from "framer-motion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertTriangle, Headphones, BookOpen, PenTool, Mic, Clock, Award } from "lucide-react"
-import { sectionHeader, slideUp, cardItem } from "@/lib/animations"
+import { sectionHeader, slideUp } from "@/lib/animations"
 
 const sections = [
   {
@@ -119,7 +119,7 @@ export function AboutCELPIP() {
       >
         <h2 className="heading-3 mb-6 text-gradient-primary">Test Format</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {sections.map((section, index) => {
+          {sections.map((section) => {
             const Icon = section.icon
             return (
               <Card key={section.name} className="card-hover card-elevated">

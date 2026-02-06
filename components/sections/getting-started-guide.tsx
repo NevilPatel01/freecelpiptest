@@ -6,8 +6,8 @@ import { useInView } from "framer-motion"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2, ArrowRight, BookOpen, Target, TrendingUp, Award } from "lucide-react"
-import { sectionHeader, cardItem, slideUp } from "@/lib/animations"
+import { ArrowRight, BookOpen, Target, TrendingUp, Award } from "lucide-react"
+import { sectionHeader, cardItem } from "@/lib/animations"
 
 const steps = [
   {

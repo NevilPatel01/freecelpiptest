@@ -276,7 +276,7 @@ export function StudyResources() {
                   { name: "Reading", duration: "55-60 minutes", tasks: "4 parts" },
                   { name: "Writing", duration: "53-60 minutes", tasks: "2 tasks" },
                   { name: "Speaking", duration: "15-20 minutes", tasks: "8 tasks" },
-                ].map((section, index) => (
+                ].map((section) => (
                   <Card key={section.name} className="card-hover card-elevated">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base font-semibold mb-2">{section.name}</CardTitle>
@@ -311,7 +311,7 @@ export function StudyResources() {
                 Study Guides
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {studyGuides.map((guide, index) => {
+                {studyGuides.map((guide) => {
                   const Icon = guide.icon
                   return (
                     <Card key={guide.name} className="card-hover card-elevated">
@@ -374,7 +374,7 @@ export function StudyResources() {
                   { week: "Week 3-4", task: "Focus on weakest section with targeted practice" },
                   { week: "Week 5-6", task: "Practice all sections and review study materials" },
                   { week: "Week 7-8", task: "Take full mock tests and refine strategies" },
-                ].map((item, index) => (
+                ].map((item) => (
                   <Card key={item.week} className="card-hover card-elevated">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base font-semibold mb-1.5">{item.week}</CardTitle>

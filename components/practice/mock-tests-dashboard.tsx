@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Clock, CheckCircle2, AlertCircle, Mail, Play, Pause, ArrowRight } from "lucide-react"
-import Link from "next/link"
 
 export function MockTestsDashboard() {
   const [timeRemaining, setTimeRemaining] = useState(18000) // 5 hours in seconds

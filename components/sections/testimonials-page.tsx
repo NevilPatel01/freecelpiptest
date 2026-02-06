@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { useRef } from "react"
 import { useInView } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
-import { Star, Quote, Play } from "lucide-react"
+import { Star, Quote } from "lucide-react"
 import { sectionHeader, cardItem } from "@/lib/animations"
 import { Button } from "@/components/ui/button"
 

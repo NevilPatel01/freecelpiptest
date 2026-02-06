@@ -1,11 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Headphones, BookOpen, PenTool, Mic, Clock, Play, Pause, ArrowLeft, Mail, Bell } from "lucide-react"
+import { Headphones, BookOpen, PenTool, Mic, Clock, Play, Pause, ArrowLeft, Bell } from "lucide-react"
 import Link from "next/link"
 
 interface PracticeSectionProps {
@@ -46,6 +45,17 @@ export function PracticeSection({ section }: PracticeSectionProps) {
   const [timeRemaining, setTimeRemaining] = useState(1800) // 30 minutes in seconds
   const [currentQuestion, setCurrentQuestion] = useState(1)
   const [writingText, setWritingText] = useState("")
+
+  // Timer countdown
+  useEffect(() => {
+    if (!isPlaying || timeRemaining <= 0) return
+    
+    const timer = setInterval(() => {
+      setTimeRemaining(prev => Math.max(0, prev - 1))
+    }, 1000)
+    
+    return () => clearInterval(timer)
+  }, [isPlaying, timeRemaining])
 
   // Mock questions
   const mockQuestions = {

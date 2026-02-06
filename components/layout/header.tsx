@@ -1,10 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
-import { Menu, X, User, LogOut, Bookmark, Settings } from "lucide-react"
+import { Menu, User, LogOut, Bookmark, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,

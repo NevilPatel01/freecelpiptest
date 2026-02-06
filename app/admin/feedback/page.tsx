@@ -97,21 +97,6 @@ export default function FeedbackPage() {
     a.click();
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'new':
-        return 'default';
-      case 'in-progress':
-        return 'secondary';
-      case 'resolved':
-        return 'success';
-      case 'archived':
-        return 'outline';
-      default:
-        return 'default';
-    }
-  };
-
   if (loading) {
     return (
       <div className='flex items-center justify-center h-64'>
