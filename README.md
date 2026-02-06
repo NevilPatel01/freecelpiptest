@@ -26,35 +26,142 @@ Users reach the platform through DNS and an Azure Load Balancer. Traffic lands o
 
 ```mermaid
 flowchart TB
-   user[User Browser] --> dns[DNS: freecelpiptest.com]
-   dns --> lb[Azure Load Balancer]
-   lb --> nginx[NGINX Ingress Controller]
-   nginx --> ingress[Ingress: freecelpip]
-   ingress --> svc[Service: freecelpip]
-   svc --> pods[Pods: Next.js App]
-
-   subgraph AKS[Azure Kubernetes Service]
-      nginx
-      ingress
-      svc
-      pods
-      csi[Secrets Store CSI Driver]
-   end
-
-   pods -->|ENV from SecretProviderClass| csi
-   csi --> kv[Azure Key Vault]
-
-   pods -->|DB connection| pg[Azure PostgreSQL Flexible Server]
-   pods -->|Telemetry| ai[Application Insights]
-
-   subgraph AzureInfra[Azure Infrastructure]
-      acr[Azure Container Registry]
-      kv
-      pg
-      ai
-   end
-
-   acr -->|Image pull| pods
+    %% ============================================
+    %% User & Domain Layer
+    %% ============================================
+    USER["👤 User Browser"]
+    PRODDOMAIN["🌐 freecelpiptest.com"]
+    DEVDOMAIN["🌐 dev.freecelpiptest.com"]
+    
+    %% ============================================
+    %% GitHub Actions CI/CD Pipeline
+    %% ============================================
+    subgraph GITHUB["⚡ GitHub Actions CI/CD"]
+        direction TB
+        TRIGGER["🔔 Triggers<br/>• Push: main/develop<br/>• PR: main"]
+        
+        subgraph CI["🧪 CI Jobs"]
+            direction LR
+            LINT["✅ Lint & Test<br/>ESLint • Jest • TSC"]
+            SECURITY["🔒 Security Scan<br/>Trivy • CodeQL"]
+        end
+        
+        subgraph BUILD["🏗️ Build Job"]
+            direction LR
+            DOCKER["🐳 Docker Buildx<br/>linux/amd64,arm64"]
+            PUSH["📦 Push ACR<br/>freecelpip:1.2.3"]
+        end
+        
+        subgraph CD["🚀 CD Jobs"]
+            direction LR
+            DEPLOYDEV["🌱 Deploy Dev<br/>Helm upgrade --set image.tag=1.2.3-dev"]
+            DEPLOYPROD["🔥 Deploy Prod<br/>Helm upgrade --set image.tag=1.2.3"]
+            SMOKE["🧪 Smoke Tests<br/>curl /api/health"]
+        end
+        
+        OIDC["🔐 Azure OIDC<br/>Workload Identity Federation"]
+    end
+    
+    %% ============================================
+    %% Azure Infrastructure
+    %% ============================================
+    subgraph AZURE["☁️ Azure Canada Central"]
+        direction TB
+        
+        ACR["📦 Azure Container Registry<br/>crdevru7klmqtlrise.azurecr.io<br/>freecelpip:1.2.3"]
+        
+        subgraph AKS["⚙️ AKS Cluster"]
+            direction TB
+            
+            INGRESS["🔀 NGINX Ingress Controller<br/>52.139.19.34<br/>cert-manager SSL"]
+            
+            subgraph FREECELPIP["📦 Namespace: freecelpip"]
+                direction LR
+                POD["🟢 Next.js Pod<br/>Port: 3000<br/>CPU: 100m-500m<br/>RAM: 256-512Mi<br/>/api/health"]
+                SERVICE["⚡ K8s Service<br/>ClusterIP:80→3000"]
+            end
+        end
+        
+        subgraph SECRETS["🔐 Secret Management"]
+            KV["Key Vault<br/>kv-dev-ru7klmqtlrise"]
+            CSI["CSI Driver<br/>SecretProviderClass"]
+        end
+        
+        DB["🗄️ PostgreSQL Flexible Server<br/>psql-dev-ru7klmqtlrise<br/>B2s • 128GB • SSL"]
+        APPINSIGHTS["📊 Application Insights<br/>appi-dev-ru7klmqtlrise"]
+    end
+    
+    %% ============================================
+    %% CI/CD Flow (Fixed Sequence)
+    %% ============================================
+    TRIGGER --> LINT --> SECURITY --> DOCKER --> PUSH
+    OIDC -.auth.-> ACR
+    PUSH -.->|develop| DEPLOYDEV
+    PUSH -.->|main| DEPLOYPROD
+    DEPLOYDEV --> SMOKE
+    DEPLOYPROD --> SMOKE
+    
+    %% ============================================
+    %% Deployment Flow
+    %% ============================================
+    ACR -.docker-pull.-> POD
+    DEPLOYPROD -.helm-upgrade.-> AKS
+    DEPLOYDEV -.helm-upgrade.-> AKS
+    
+    %% ============================================
+    %% Traffic Flow
+    %% ============================================
+    USER -->|HTTPS| PRODDOMAIN
+    USER -.->|HTTPS| DEVDOMAIN
+    PRODDOMAIN -->|443| INGRESS
+    DEVDOMAIN -->|443| INGRESS
+    INGRESS --> SERVICE
+    SERVICE --> POD
+    
+    %% ============================================
+    %% Data & Secrets Flow
+    %% ============================================
+    POD <-->|Prisma ORM<br/>SSL Required| DB
+    KV -->|RBAC| CSI
+    CSI -.mount.-> POD
+    POD -.telemetry.-> APPINSIGHTS
+    
+    %% ============================================
+    %% Prisma Migrations
+    %% ============================================
+    DEPLOYPROD -.->|"kubectl run migrate"| DB
+    DEPLOYDEV -.->|"kubectl run migrate"| DB
+    
+    %% ============================================
+    %% Professional Styling
+    %% ============================================
+    style GITHUB fill:#1e3a8a,stroke:#3b82f6,stroke-width:3px,color:#ffffff
+    style AZURE fill:#0078d4,stroke:#0369a1,stroke-width:3px,color:#ffffff
+    style AKS fill:#0ea5e9,stroke:#0284c7,stroke-width:2px
+    style FREECELPIP fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    
+    style TRIGGER fill:#10b981,stroke:#059669,stroke-width:2px,color:#ffffff
+    style LINT fill:#3b82f6,stroke:#1d4ed8,color:#ffffff
+    style SECURITY fill:#ef4444,stroke:#dc2626,color:#ffffff
+    style DOCKER fill:#f59e0b,stroke:#d97706,color:#ffffff
+    style PUSH fill:#8b5cf6,stroke:#7c3aed,color:#ffffff
+    style DEPLOYDEV fill:#6b7280,stroke:#4b5563,color:#ffffff
+    style DEPLOYPROD fill:#ef4444,stroke:#dc2626,color:#ffffff
+    style SMOKE fill:#10b981,stroke:#059669,color:#ffffff
+    
+    style ACR fill:#1e40af,stroke:#1d4ed8,color:#ffffff
+    style INGRESS fill:#f97316,stroke:#ea580c,color:#000
+    style POD fill:#22c55e,stroke:#16a34a,color:#000
+    style SERVICE fill:#3b82f6,stroke:#1d4ed8,color:#ffffff
+    
+    style KV fill:#eab308,stroke:#ca8a04,color:#000
+    style CSI fill:#a855f7,stroke:#9333ea,color:#ffffff
+    style DB fill:#14b8a6,stroke:#0d9488,color:#ffffff
+    style APPINSIGHTS fill:#8b5cf6,stroke:#7c3aed,color:#ffffff
+    
+    style USER fill:#6b7280,stroke:#4b5563,color:#ffffff
+    style PRODDOMAIN fill:#10b981,stroke:#059669,color:#ffffff
+    style DEVDOMAIN fill:#f59e0b,stroke:#d97706,color:#ffffff
 ```
 
 ## Local Development
