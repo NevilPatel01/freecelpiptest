@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import { headers } from "next/headers"
 
 // Admin emails are loaded from environment variable for security
 // Set ADMIN_EMAIL in .env (local) or Azure Key Vault (production)
@@ -8,11 +9,20 @@ const ADMIN_EMAILS = process.env.ADMIN_EMAIL
   ? process.env.ADMIN_EMAIL.split(",").map((email) => email.trim())
   : []
 
+async function getAdminCallbackUrl(): Promise<string> {
+  const headersList = await headers()
+  const host = headersList.get("x-forwarded-host") ?? headersList.get("host") ?? ""
+  const proto = headersList.get("x-forwarded-proto") === "https" ? "https" : "http"
+  const base = host ? `${proto}://${host}` : ""
+  return base ? `${base}/admin` : "/admin"
+}
+
 export async function requireAdmin() {
     const session = await auth()
 
     if (!session) {
-        redirect("/api/auth/signin")
+        const callbackUrl = await getAdminCallbackUrl()
+        redirect(`/api/auth/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`)
     }
 
     if (!ADMIN_EMAILS.length) {
