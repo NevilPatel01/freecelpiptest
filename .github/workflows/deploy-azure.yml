@@ -1,3 +1,5 @@
+# Azure deploy is disabled for push/PR to avoid redeploying after infra is destroyed.
+# Lint, test, and security still run on push/PR. Full build+deploy only via "Run workflow" (workflow_dispatch).
 name: Azure AKS Deployment
 
 on:
@@ -81,12 +83,12 @@ jobs:
           path: trivy-results.sarif
           retention-days: 30
 
-  # Job 3: Build and Push Docker Image
+  # Job 3: Build and Push Docker Image (only when manually running workflow; no auto Azure deploy)
   build:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
     needs: [test, security]
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     outputs:
       image-tag: ${{ steps.meta.outputs.tags }}
       acr-login-server: ${{ steps.acr-creds.outputs.ACR_LOGIN_SERVER }}
@@ -162,12 +164,12 @@ jobs:
           path: trivy-image-results.sarif
           retention-days: 30
 
-  # Job 4: Deploy to Development
+  # Job 4: Deploy to Development (only on manual workflow_dispatch)
   deploy-dev:
     name: Deploy to Development
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/develop'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/develop'
     environment:
       name: development
       url: https://dev.freecelpiptest.com
@@ -226,12 +228,12 @@ jobs:
             job/prisma-migrate-${{ github.sha }} \
             --namespace=freecelpip
 
-  # Job 5: Deploy to Production
+  # Job 5: Deploy to Production (only on manual workflow_dispatch)
   deploy-prod:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     environment:
       name: production
       url: https://freecelpiptest.com
@@ -290,12 +292,12 @@ jobs:
           kubectl rollout status deployment/freecelpip -n freecelpip --timeout=5m
           kubectl get pods -n freecelpip -l app=freecelpip
 
-  # Job 6: Smoke Tests
+  # Job 6: Smoke Tests (only after manual production deploy)
   smoke-test:
     name: Smoke Tests
     runs-on: ubuntu-latest
     needs: [deploy-prod]
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     steps:
       - name: Health check
         run: |
