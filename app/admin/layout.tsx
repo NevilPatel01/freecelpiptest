@@ -1,6 +1,6 @@
 import { requireAdmin } from '@/lib/admin';
 import Link from 'next/link';
-import { Home, Mail, MessageSquare, LogOut } from 'lucide-react';
+import { Home, Mail, MessageSquare, LogOut, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default async function AdminLayout({
@@ -56,6 +56,13 @@ export default async function AdminLayout({
             >
               <MessageSquare className='h-4 w-4' />
               Feedback
+            </Link>
+            <Link
+              href='/admin/blog'
+              className='flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-accent'
+            >
+              <FileText className='h-4 w-4' />
+              Blog Posts
             </Link>
           </aside>
 

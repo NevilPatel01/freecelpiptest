@@ -10,7 +10,8 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:docker": "docker run -d --name postgres-dev -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=freecelpip -p 5434:5432 postgres:15-alpine"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

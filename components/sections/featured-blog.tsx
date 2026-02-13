@@ -2,33 +2,14 @@ import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Clock } from "lucide-react"
+import type { BlogPost } from "@/lib/blog"
 
-// Placeholder blog posts - will be replaced with actual data from markdown files
-const featuredPosts = [
-  {
-    slug: "top-10-celpip-listening-tips",
-    title: "Top 10 CELPIP Listening Tips for Success",
-    excerpt: "Master the listening section with these proven strategies and techniques.",
-    category: "Listening Tips",
-    readingTime: 5,
-  },
-  {
-    slug: "celpip-writing-task-1-guide",
-    title: "Complete Guide to CELPIP Writing Task 1",
-    excerpt: "Learn how to structure and write effective emails for the CELPIP writing test.",
-    category: "Writing Tips",
-    readingTime: 8,
-  },
-  {
-    slug: "improve-celpip-speaking-score",
-    title: "How to Improve Your CELPIP Speaking Score",
-    excerpt: "Practical tips and practice strategies to boost your speaking performance.",
-    category: "Speaking Tips",
-    readingTime: 6,
-  },
-]
+interface FeaturedBlogProps {
+  posts: Pick<BlogPost, "slug" | "title" | "excerpt" | "category" | "readingTime">[]
+}
 
-export function FeaturedBlog() {
+export function FeaturedBlog({ posts }: FeaturedBlogProps) {
+  if (!posts.length) return null
   return (
     <section className="section-padding bg-muted/30">
       <div className="container mx-auto container-padding">
@@ -48,7 +29,7 @@ export function FeaturedBlog() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {featuredPosts.map((post) => (
+          {posts.slice(0, 3).map((post) => (
             <Card key={post.slug} className="card-hover h-full flex flex-col card-elevated">
               <CardHeader className="pb-3">
                 <div className="inline-block px-2 py-0.5 rounded-md text-xs font-semibold gradient-primary text-white mb-2.5 shadow-sm">

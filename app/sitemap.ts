@@ -1,7 +1,22 @@
 import { MetadataRoute } from 'next'
+import { prisma } from '@/lib/prisma'
+import { getSiteUrl } from '@/lib/constants'
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://freecelpiptest.com'
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = getSiteUrl()
+
+  const blogPosts = await prisma.blogPost.findMany({
+    where: { published: true, publishedAt: { not: null } },
+    select: { slug: true, updatedAt: true },
+    orderBy: { updatedAt: 'desc' },
+  })
+
+  const blogUrls: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: post.updatedAt,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
   
   return [
     {
@@ -52,6 +67,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.8,
     },
+    ...blogUrls,
     {
       url: `${baseUrl}/getting-started`,
       lastModified: new Date(),

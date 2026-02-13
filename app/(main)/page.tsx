@@ -3,7 +3,8 @@ import { HeroSection } from "@/components/sections/hero-section"
 import { ValueProposition } from "@/components/sections/value-proposition"
 import { AboutContent } from "@/components/sections/about-content"
 import { OrganizationSchema } from "@/components/seo/organization-schema"
-import dynamic from "next/dynamic"
+import { FeaturedBlog } from "@/components/sections/featured-blog"
+import { getAllBlogPosts } from "@/lib/blog"
 
 export const metadata: Metadata = {
   alternates: {
@@ -11,13 +12,8 @@ export const metadata: Metadata = {
   },
 }
 
-// Lazy load FeaturedBlog to reduce initial bundle
-const FeaturedBlogLazy = dynamic(() => import("@/components/sections/featured-blog").then(mod => ({ default: mod.FeaturedBlog })), {
-  loading: () => <div className="section-padding"><div className="container mx-auto container-padding"><div className="h-64" /></div></div>,
-  ssr: true
-})
-
-export default function HomePage() {
+export default async function HomePage() {
+  const posts = await getAllBlogPosts()
   return (
     <>
       <OrganizationSchema />
@@ -25,7 +21,7 @@ export default function HomePage() {
         <HeroSection />
         <ValueProposition />
         <AboutContent />
-        <FeaturedBlogLazy />
+        <FeaturedBlog posts={posts} />
       </div>
     </>
   )

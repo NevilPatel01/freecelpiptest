@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Mail, MessageSquare, HelpCircle, Send, CheckCircle2 } from "lucide-react"
 import { sectionHeader, slideUp } from "@/lib/animations"
+import { getContactEmail } from "@/lib/constants"
 
 const faqs = [
   {
@@ -174,7 +175,7 @@ export function ContactPage() {
                 </div>
                 <div>
                   <p className="font-semibold text-sm mb-1">Email</p>
-                  <p className="text-xs text-muted-foreground">contact@freecelpiptest.com</p>
+                  <p className="text-xs text-muted-foreground">{getContactEmail()}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">

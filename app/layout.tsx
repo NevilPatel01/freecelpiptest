@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { WebsiteSchema } from "@/components/seo/website-schema";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { APP_NAME, getSiteUrl } from "@/lib/constants";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -15,16 +16,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://freecelpiptest.com"),
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "FreeCELPIPTest - CELPIP Practice Tests & Expert Tips",
-    template: "%s | FreeCELPIPTest",
+    default: `${APP_NAME} - CELPIP Practice Tests & Expert Tips`,
+    template: `%s | ${APP_NAME}`,
   },
   description: "Comprehensive CELPIP test preparation platform with practice tests, study guides, and expert tips for all 4 test sections to help you achieve your target score.",
   keywords: ["CELPIP", "CELPIP test", "CELPIP practice", "CELPIP preparation", "free CELPIP", "CELPIP listening", "CELPIP reading", "CELPIP writing", "CELPIP speaking"],
-  authors: [{ name: "FreeCELPIPTest" }],
-  creator: "FreeCELPIPTest",
-  publisher: "FreeCELPIPTest",
+  authors: [{ name: APP_NAME }],
+  creator: APP_NAME,
+  publisher: APP_NAME,
   icons: {
     icon: [
       { url: "/favicon.png", sizes: "any", type: "image/png" },
@@ -39,22 +40,22 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://freecelpiptest.com",
-    siteName: "FreeCELPIPTest",
-    title: "FreeCELPIPTest - Master CELPIP with Free Practice Tests",
+    url: getSiteUrl(),
+    siteName: APP_NAME,
+    title: `${APP_NAME} - Master CELPIP with Free Practice Tests`,
     description: "Free CELPIP test preparation platform with practice tests and expert tips.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "FreeCELPIPTest",
+        alt: APP_NAME,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FreeCELPIPTest - Master CELPIP with Free Practice Tests",
+    title: `${APP_NAME} - Master CELPIP with Free Practice Tests`,
     description: "Free CELPIP test preparation platform with practice tests and expert tips.",
     images: ["/og-image.jpg"],
   },
@@ -70,10 +71,10 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://freecelpiptest.com",
+    canonical: getSiteUrl(),
   },
   verification: {
-    google: "your-google-verification-code",
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
   },
 };
 

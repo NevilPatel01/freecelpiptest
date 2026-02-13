@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation"
-import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/blog"
+import { getBlogPostBySlug, getAllBlogPosts, getBlogPostSlugs } from "@/lib/blog"
 import { BlogPostView } from "@/components/blog/blog-post-view"
+import { getSiteUrl, DEFAULT_AUTHOR, APP_NAME } from "@/lib/constants"
 
 export async function generateStaticParams() {
-  const posts = await getAllBlogPosts()
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
+  const slugs = await getBlogPostSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -20,21 +19,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const keywords = post.keywords || post.tags || []
-  const coverImage = post.coverImage || post.featuredImage || `${process.env.NEXT_PUBLIC_SITE_URL || 'https://freecelpiptest.com'}/images/blog/default-cover.jpg`
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://freecelpiptest.com'
+  const siteUrl = getSiteUrl()
+  const coverImage = post.coverImage || post.featuredImage || `${siteUrl}/images/blog/default-cover.jpg`
 
   return {
-    title: `${post.title} | FreeCELPIPTest Blog`,
+    title: `${post.title} | ${APP_NAME} Blog`,
     description: post.excerpt,
     keywords: keywords.join(', '),
-    authors: [{ name: post.author || 'FreeCELPIPTest' }],
+    authors: [{ name: post.author || DEFAULT_AUTHOR }], // post.author from DB or constant
     openGraph: {
       title: post.title,
       description: post.excerpt,
       type: "article",
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
-      authors: [post.author || 'FreeCELPIPTest'],
+      authors: [post.author || DEFAULT_AUTHOR],
       tags: keywords,
       images: [
         {
@@ -44,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
           alt: post.title,
         },
       ],
-      siteName: 'FreeCELPIPTest',
+      siteName: APP_NAME,
       url: `${siteUrl}/blog/${post.slug}`,
     },
     twitter: {
