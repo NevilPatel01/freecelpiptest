@@ -12,8 +12,16 @@ export const metadata: Metadata = {
   },
 }
 
+// Avoid DB at build time (build workers often cannot reach the database)
+export const dynamic = "force-dynamic"
+
 export default async function HomePage() {
-  const posts = await getAllBlogPosts()
+  let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []
+  try {
+    posts = await getAllBlogPosts()
+  } catch {
+    // DB unreachable at build; homepage still renders, FeaturedBlog gets empty list
+  }
   return (
     <>
       <OrganizationSchema />

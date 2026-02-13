@@ -6,9 +6,15 @@ import { getSiteUrl, DEFAULT_AUTHOR, APP_NAME } from "@/lib/constants"
 export const dynamic = "force-dynamic"
 
 export async function generateStaticParams() {
+  // Skip DB at build time: build servers often cannot reach the database (e.g. DO build workers).
+  // Blog pages are rendered at runtime when users visit.
   if (!process.env.DATABASE_URL) return []
-  const slugs = await getBlogPostSlugs()
-  return slugs.map((slug) => ({ slug }))
+  try {
+    const slugs = await getBlogPostSlugs()
+    return slugs.map((slug) => ({ slug }))
+  } catch {
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

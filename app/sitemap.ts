@@ -5,19 +5,25 @@ import { getSiteUrl } from '@/lib/constants'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl()
 
-  const blogPosts = await prisma.blogPost.findMany({
-    where: { published: true, publishedAt: { not: null } },
-    select: { slug: true, updatedAt: true },
-    orderBy: { updatedAt: 'desc' },
-  })
+  let blogUrls: MetadataRoute.Sitemap = []
+  if (process.env.DATABASE_URL) {
+    try {
+      const blogPosts = await prisma.blogPost.findMany({
+        where: { published: true, publishedAt: { not: null } },
+        select: { slug: true, updatedAt: true },
+        orderBy: { updatedAt: 'desc' },
+      })
+      blogUrls = blogPosts.map((post) => ({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: post.updatedAt,
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      }))
+    } catch {
+      // DB unreachable at build (e.g. DO build workers); sitemap still works without blog URLs.
+    }
+  }
 
-  const blogUrls: MetadataRoute.Sitemap = blogPosts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: post.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }))
-  
   return [
     {
       url: baseUrl,

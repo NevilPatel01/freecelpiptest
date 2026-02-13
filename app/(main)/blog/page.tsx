@@ -15,7 +15,12 @@ export const metadata = {
 export const dynamic = "force-dynamic"
 
 export default async function BlogPage() {
-  const posts = await getAllBlogPosts()
+  let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []
+  try {
+    posts = await getAllBlogPosts()
+  } catch {
+    // DB unreachable at build; blog page still renders with empty list
+  }
 
   return (
     <Suspense fallback={<BlogListingSkeleton />}>
