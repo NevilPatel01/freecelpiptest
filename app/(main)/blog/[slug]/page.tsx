@@ -3,7 +3,10 @@ import { getBlogPostBySlug, getAllBlogPosts, getBlogPostSlugs } from "@/lib/blog
 import { BlogPostView } from "@/components/blog/blog-post-view"
 import { getSiteUrl, DEFAULT_AUTHOR, APP_NAME } from "@/lib/constants"
 
+export const dynamic = "force-dynamic"
+
 export async function generateStaticParams() {
+  if (!process.env.DATABASE_URL) return []
   const slugs = await getBlogPostSlugs()
   return slugs.map((slug) => ({ slug }))
 }

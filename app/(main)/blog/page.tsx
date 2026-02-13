@@ -11,8 +11,8 @@ export const metadata = {
   },
 }
 
-// Revalidate every hour for new blog posts
-export const revalidate = 3600
+// Render at request time so build does not require DATABASE_URL
+export const dynamic = "force-dynamic"
 
 export default async function BlogPage() {
   const posts = await getAllBlogPosts()
