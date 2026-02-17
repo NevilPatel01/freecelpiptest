@@ -28,8 +28,8 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   
-  // Static generation
-  output: 'standalone', // For containerized deployment (Docker/AKS)
+  // Use default output so `npm run build` + `npm start` works everywhere (local, DO, etc.).
+  // For Docker/AKS you can set output: 'standalone' and run the standalone server instead.
   
   // Environment variables for runtime
   env: {
