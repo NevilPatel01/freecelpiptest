@@ -21,6 +21,7 @@
 import { readFileSync, existsSync } from "node:fs"
 import { resolve } from "node:path"
 import {
+  AppwriteException,
   Client,
   Databases,
   Storage,
@@ -103,19 +104,86 @@ async function waitForIndex(
   throw new Error(`Timeout waiting for index "${key}"`)
 }
 
-async function ensureDatabase(db: Databases, databaseId: string, ensure: boolean) {
+function isWrongRegionError(e: unknown): boolean {
+  if (!(e instanceof AppwriteException)) return false
+  return (
+    e.type === "general_access_forbidden" ||
+    /not accessible in this region/i.test(e.message)
+  )
+}
+
+function printRegionalEndpointHelp(currentEndpoint: string) {
+  console.error(`
+Appwrite: wrong API region for this project (current endpoint: ${currentEndpoint}).
+
+Fix: In Appwrite Console open your project → Settings and copy the exact "API Endpoint"
+(usually https://<region>.cloud.appwrite.io/v1 — not the generic cloud.appwrite.io).
+
+Examples:
+  https://tor.cloud.appwrite.io/v1   Toronto
+  https://fra.cloud.appwrite.io/v1   Frankfurt
+  https://nyc.cloud.appwrite.io/v1   New York
+  https://sfo.cloud.appwrite.io/v1   San Francisco
+  https://sgp.cloud.appwrite.io/v1   Singapore
+  https://syd.cloud.appwrite.io/v1   Sydney
+
+Set NEXT_PUBLIC_APPWRITE_ENDPOINT to that value in .env / .env.local and run again.
+Docs: https://appwrite.io/docs/products/network/endpoints
+`)
+}
+
+async function ensureDatabase(
+  db: Databases,
+  databaseId: string,
+  ensure: boolean,
+  endpointForHints: string
+) {
   try {
     await db.get({ databaseId })
     console.log(`Database "${databaseId}" exists.`)
-  } catch {
-    if (!ensure) {
+  } catch (e) {
+    if (isWrongRegionError(e)) {
+      printRegionalEndpointHelp(endpointForHints)
+      process.exit(1)
+    }
+    if (e instanceof AppwriteException && e.code === 401 && !isWrongRegionError(e)) {
       console.error(
-        `Database "${databaseId}" not found. Create it in the console or re-run with --ensure-database`
+        "Appwrite returned 401. Check APPWRITE_API_KEY scopes (databases.read/write) and project ID."
       )
       process.exit(1)
     }
-    await db.create({ databaseId, name: "FreeCELPIPTest" })
-    console.log(`Created database "${databaseId}".`)
+
+    const likelyMissing =
+      e instanceof AppwriteException &&
+      (e.code === 404 ||
+        /not\s+found/i.test(e.message) ||
+        e.type?.toLowerCase().includes("not_found"))
+
+    if (!likelyMissing) {
+      console.error(e)
+      process.exit(1)
+    }
+
+    if (!ensure) {
+      console.error(
+        `Database "${databaseId}" was not found with your current endpoint. Either:\n` +
+          `  • Create a database with this ID in Appwrite Console → Databases, or\n` +
+          `  • Run: npx tsx scripts/setup-appwrite-collections.ts --ensure-database\n` +
+          `If you see a "region" error when using --ensure-database, fix NEXT_PUBLIC_APPWRITE_ENDPOINT first.`
+      )
+      process.exit(1)
+    }
+
+    try {
+      await db.create({ databaseId, name: "FreeCELPIPTest" })
+      console.log(`Created database "${databaseId}".`)
+    } catch (createErr) {
+      if (isWrongRegionError(createErr)) {
+        printRegionalEndpointHelp(endpointForHints)
+        process.exit(1)
+      }
+      throw createErr
+    }
   }
 }
 
@@ -171,7 +239,7 @@ async function main() {
   const db = new Databases(client)
   const storage = new Storage(client)
 
-  await ensureDatabase(db, databaseId, ensureDb)
+  await ensureDatabase(db, databaseId, ensureDb, endpoint)
 
   // --- blog_posts (admin CRUD via authenticated client; builds use API key) ---
   const blogPerms = [
