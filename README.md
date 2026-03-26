@@ -22,7 +22,13 @@ npm install
 cp .env.example .env.local
 ```
 
-Fill `.env.local` using `.env.example` (Appwrite IDs, `NEXT_PUBLIC_SITE_URL`, optional `APPWRITE_API_KEY` for build-time blog slugs). Then:
+Fill `.env.local` using `.env.example` (Appwrite project + database IDs, `NEXT_PUBLIC_SITE_URL`, `APPWRITE_API_KEY`). Provision collections and the blog images bucket:
+
+```bash
+npm run setup:appwrite
+```
+
+Copy the printed collection and bucket IDs into `.env.local`, then:
 
 ```bash
 npm run dev

@@ -12,7 +12,8 @@
     "preview:static": "npx --yes serve@14 out -l 3000",
     "start": "next start",
     "lint": "eslint .",
-    "seed:blog": "tsx scripts/seed-blog-from-mdx.ts"
+    "seed:blog": "tsx scripts/seed-blog-from-mdx.ts",
+    "setup:appwrite": "tsx scripts/setup-appwrite-collections.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
