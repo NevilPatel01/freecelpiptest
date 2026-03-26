@@ -1,6 +1,6 @@
 /**
  * Import MDX/MD posts from content/blog into Appwrite (blog collection).
- * Requires: NEXT_PUBLIC_APPWRITE_* and APPWRITE_API_KEY (same as static build).
+ * Loads .env.local then .env (same keys as Next.js / static build).
  *
  * Run: npm run seed:blog
  */
@@ -10,6 +10,9 @@ import path from "path"
 import matter from "gray-matter"
 import { Client, Databases, ID, Query } from "node-appwrite"
 import { DEFAULT_AUTHOR } from "../lib/constants"
+import { loadEnvFiles } from "./load-env"
+
+loadEnvFiles()
 
 const CONTENT_DIR = path.join(process.cwd(), "content/blog")
 

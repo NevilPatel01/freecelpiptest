@@ -5,6 +5,9 @@
 import fs from "fs"
 import path from "path"
 import { listPublishedBlogSlugsForStaticExport } from "../lib/appwrite/build-blog-slugs"
+import { loadEnvFiles } from "./load-env"
+
+loadEnvFiles()
 
 async function main() {
   const slugs = await listPublishedBlogSlugsForStaticExport()
