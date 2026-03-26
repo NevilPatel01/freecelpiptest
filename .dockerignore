@@ -49,15 +49,10 @@ dist
 *.swo
 *~
 
-# Azure
+# IaC / legacy (optional local ignores)
 .azure
-infra
 terraform
 .terraform
-
-# Kubernetes
-k8s
-helm
 
 # Docs
 docs

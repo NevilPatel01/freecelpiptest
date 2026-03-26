@@ -11,9 +11,6 @@ export const metadata = {
   },
 }
 
-// Render at request time so build does not require DATABASE_URL
-export const dynamic = "force-dynamic"
-
 export default async function BlogPage() {
   let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []
   try {

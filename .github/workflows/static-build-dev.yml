@@ -1,0 +1,46 @@
+# Production-like static export for the dev branch; uploads `out/` as an artifact.
+# Host the folder on any static host (S3, Netlify, Vercel static, Cloudflare Pages, nginx, etc.).
+# Optional: connect Vercel/Netlify to this branch and skip this workflow—use the same env vars there.
+name: Static build (dev branches)
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "20.x"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build static site
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_APPWRITE_ENDPOINT: ${{ secrets.NEXT_PUBLIC_APPWRITE_ENDPOINT }}
+          NEXT_PUBLIC_APPWRITE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_PROJECT_ID }}
+          NEXT_PUBLIC_APPWRITE_DATABASE_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_DATABASE_ID }}
+          NEXT_PUBLIC_APPWRITE_COLLECTION_BLOG_POSTS: ${{ secrets.NEXT_PUBLIC_APPWRITE_COLLECTION_BLOG_POSTS }}
+          NEXT_PUBLIC_APPWRITE_COLLECTION_NEWSLETTER: ${{ secrets.NEXT_PUBLIC_APPWRITE_COLLECTION_NEWSLETTER }}
+          NEXT_PUBLIC_APPWRITE_COLLECTION_FEEDBACK: ${{ secrets.NEXT_PUBLIC_APPWRITE_COLLECTION_FEEDBACK }}
+          NEXT_PUBLIC_APPWRITE_BUCKET_BLOG_IMAGES: ${{ secrets.NEXT_PUBLIC_APPWRITE_BUCKET_BLOG_IMAGES }}
+          NEXT_PUBLIC_ADMIN_EMAIL: ${{ secrets.NEXT_PUBLIC_ADMIN_EMAIL }}
+          NEXT_PUBLIC_APPWRITE_ADMIN_TEAM_ID: ${{ secrets.NEXT_PUBLIC_APPWRITE_ADMIN_TEAM_ID }}
+          APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+        run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: static-out
+          path: out/
+          retention-days: 14

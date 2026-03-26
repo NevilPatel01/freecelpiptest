@@ -12,8 +12,7 @@ export const metadata: Metadata = {
   },
 }
 
-// Avoid DB at build time (build workers often cannot reach the database)
-export const dynamic = "force-dynamic"
+export const dynamic = "force-static"
 
 export default async function HomePage() {
   let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []

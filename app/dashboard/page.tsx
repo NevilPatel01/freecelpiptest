@@ -1,24 +1,25 @@
 "use client"
 
-import { useSession } from "next-auth/react"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
 import { Bookmark, Bell, Settings, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession()
+  const router = useRouter()
+  const { user, loading } = useAppwriteAuth()
   const [activeTab, setActiveTab] = useState("overview")
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      redirect("/")
+    if (!loading && !user) {
+      router.replace("/")
     }
-  }, [status])
+  }, [loading, user, router])
 
-  if (status === "loading") {
+  if (loading) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="animate-pulse space-y-4">
@@ -29,7 +30,7 @@ export default function DashboardPage() {
     )
   }
 
-  if (!session) {
+  if (!user) {
     return null
   }
 
@@ -38,7 +39,7 @@ export default function DashboardPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {session.user?.name || "User"}!
+          Welcome back, {user.name || user.email || "User"}!
         </p>
       </div>
 

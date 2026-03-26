@@ -1,20 +1,36 @@
 import { notFound } from "next/navigation"
-import { getBlogPostBySlug, getAllBlogPosts, getBlogPostSlugs } from "@/lib/blog"
+import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/blog"
 import { BlogPostView } from "@/components/blog/blog-post-view"
 import { getSiteUrl, DEFAULT_AUTHOR, APP_NAME } from "@/lib/constants"
+import fs from "fs"
+import path from "path"
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-static"
+export const dynamicParams = false
 
-export async function generateStaticParams() {
-  // Skip DB at build time: build servers often cannot reach the database (e.g. DO build workers).
-  // Blog pages are rendered at runtime when users visit.
-  if (!process.env.DATABASE_URL) return []
+function slugsFromContentDir(): string[] {
+  const dir = path.join(process.cwd(), "content/blog")
+  if (!fs.existsSync(dir)) return []
+  return fs
+    .readdirSync(dir)
+    .filter((f) => /\.(mdx|md)$/i.test(f) && !f.toLowerCase().includes("readme"))
+    .map((f) => f.replace(/\.(mdx|md)$/i, ""))
+}
+
+function slugsFromExportFile(): string[] {
+  const file = path.join(process.cwd(), "content/.blog-slugs-export.json")
+  if (!fs.existsSync(file)) return []
   try {
-    const slugs = await getBlogPostSlugs()
-    return slugs.map((slug) => ({ slug }))
+    const raw = JSON.parse(fs.readFileSync(file, "utf8"))
+    return Array.isArray(raw) ? raw.filter((s) => typeof s === "string") : []
   } catch {
     return []
   }
+}
+
+export function generateStaticParams() {
+  const slugSet = new Set([...slugsFromContentDir(), ...slugsFromExportFile()])
+  return [...slugSet].map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

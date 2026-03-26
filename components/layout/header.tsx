@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Menu, User, LogOut, Bookmark, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,7 @@ import { MobileMenu } from "./mobile-menu"
 import { ThemeToggle } from "./theme-toggle"
 
 export function Header() {
-  const { data: session } = useSession()
+  const { user, signOut, signInWithGoogle } = useAppwriteAuth()
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -115,21 +115,19 @@ export function Header() {
         <div className="flex items-center gap-4 flex-shrink-0">
           <ThemeToggle />
           
-          {session?.user ? (
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
-                  <img
-                    src={session.user.image || "/placeholder-avatar.png"}
-                    alt={session.user.name || "User"}
-                    className="h-8 w-8 rounded-full"
-                  />
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+                    {(user.name || user.email || "U").charAt(0).toUpperCase()}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 z-[100]">
                 <div className="px-2 py-1.5">
-                  <p className="text-sm font-medium">{session.user.name}</p>
-                  <p className="text-xs text-muted-foreground">{session.user.email}</p>
+                  <p className="text-sm font-medium">{user.name}</p>
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
@@ -151,7 +149,11 @@ export function Header() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    void signOut()
+                  }}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </DropdownMenuItem>
@@ -179,7 +181,11 @@ export function Header() {
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         navigation={navigation}
-        session={session}
+        user={user}
+        onSignInGoogle={signInWithGoogle}
+        onSignOut={() => {
+          void signOut()
+        }}
       />
     </header>
   )

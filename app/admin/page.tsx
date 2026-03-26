@@ -19,6 +19,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
+import { adminListNewsletter } from '@/lib/appwrite/forms';
 
 interface Subscriber {
   id: string;
@@ -31,10 +32,9 @@ export default function NewsletterPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/newsletter')
-      .then((res) => res.json())
-      .then((data) => {
-        setSubscribers(data.subscribers || []);
+    adminListNewsletter()
+      .then((list) => {
+        setSubscribers(list);
         setLoading(false);
       })
       .catch((err) => {

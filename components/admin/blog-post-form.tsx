@@ -2,12 +2,16 @@
 
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { ID } from 'appwrite';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Upload, ImagePlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DEFAULT_AUTHOR } from '@/lib/constants';
+import { useAppwriteAuth } from '@/components/providers/appwrite-auth-provider';
+import { getBrowserStorage } from '@/lib/appwrite/browser';
+import { cmsCreatePost, cmsListAllPosts, cmsUpdatePost, publicStorageFileViewUrl } from '@/lib/appwrite/cms';
 
 export interface BlogPostFormData {
   title: string;
@@ -49,6 +53,7 @@ interface BlogPostFormProps {
 
 export function BlogPostForm({ mode, initialData, postId }: BlogPostFormProps) {
   const router = useRouter();
+  const { user } = useAppwriteAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState<BlogPostFormData>({
     ...defaultForm,
@@ -75,12 +80,14 @@ export function BlogPostForm({ mode, initialData, postId }: BlogPostFormProps) {
     setUploading(true);
     setError(null);
     try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Upload failed');
-      handleChange('featuredImage', data.url);
+      const { storage, bucketId } = getBrowserStorage();
+      const created = await storage.createFile({
+        bucketId,
+        fileId: ID.unique(),
+        file,
+      });
+      const url = publicStorageFileViewUrl(created.$id);
+      handleChange('featuredImage', url);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
     } finally {
@@ -103,19 +110,23 @@ export function BlogPostForm({ mode, initialData, postId }: BlogPostFormProps) {
         ...form,
         slug: form.slug || slugify(form.title),
       };
-      const url = mode === 'create' ? '/api/admin/posts' : `/api/admin/posts/${postId}`;
-      const method = mode === 'create' ? 'POST' : 'PUT';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to save');
+      const authorFallback =
+        (user?.name || user?.email || DEFAULT_AUTHOR).trim() || DEFAULT_AUTHOR;
+      const slugKey = (payload.slug || slugify(payload.title)).trim().toLowerCase();
+      if (mode === 'create') {
+        const all = await cmsListAllPosts();
+        if (all.some((p) => p.slug === slugKey)) {
+          throw new Error('A post with this slug already exists');
+        }
+        await cmsCreatePost(payload, authorFallback);
+      } else {
+        if (!postId) throw new Error('Missing post id');
+        await cmsUpdatePost(postId, payload, authorFallback);
+      }
       router.push('/admin/blog');
-      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save');
+    } finally {
       setSaving(false);
     }
   };

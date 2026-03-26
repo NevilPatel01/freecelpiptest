@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { AppwriteAuthProvider } from "@/components/providers/appwrite-auth-provider";
 import { WebsiteSchema } from "@/components/seo/website-schema";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { APP_NAME, getSiteUrl } from "@/lib/constants";
@@ -99,7 +100,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange={false}
         >
-          {children}
+          <AppwriteAuthProvider>{children}</AppwriteAuthProvider>
         </ThemeProvider>
       </body>
     </html>

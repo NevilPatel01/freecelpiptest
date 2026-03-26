@@ -4,6 +4,12 @@ import type { Metadata } from "next"
 
 const validSections = ["listening", "reading", "writing", "speaking"]
 
+export const dynamicParams = false
+
+export function generateStaticParams() {
+  return validSections.map((section) => ({ section }))
+}
+
 const sectionConfig: Record<
   string,
   {

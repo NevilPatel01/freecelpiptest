@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { signIn, signOut } from "next-auth/react"
+import type { Models } from "appwrite"
 import { usePathname } from "next/navigation"
 import { X, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -16,10 +16,19 @@ interface MobileMenuProps {
     href: string
     submenu?: Array<{ name: string; href: string }>
   }>
-  session: any
+  user: Models.User | null
+  onSignInGoogle: () => void
+  onSignOut: () => void
 }
 
-export function MobileMenu({ isOpen, onClose, navigation, session }: MobileMenuProps) {
+export function MobileMenu({
+  isOpen,
+  onClose,
+  navigation,
+  user,
+  onSignInGoogle,
+  onSignOut,
+}: MobileMenuProps) {
   const pathname = usePathname()
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
@@ -156,37 +165,37 @@ export function MobileMenu({ isOpen, onClose, navigation, session }: MobileMenuP
 
         {/* Footer Actions */}
         <div className="p-4 border-t border-border space-y-2 flex-shrink-0">
-          {session?.user ? (
-            <>
-              <Link href="/dashboard" onClick={onClose} className="block">
-                <Button variant="outline" className="w-full">
-                  Dashboard
-                </Button>
-              </Link>
-              <Button
-                variant="destructive"
-                className="w-full"
-                onClick={() => {
-                  signOut()
-                  onClose()
-                }}
-                type="button"
-              >
-                Sign Out
+        {user ? (
+          <>
+            <Link href="/dashboard" onClick={onClose} className="block">
+              <Button variant="outline" className="w-full">
+                Dashboard
               </Button>
-            </>
-          ) : (
+            </Link>
             <Button
+              variant="destructive"
               className="w-full"
               onClick={() => {
-                signIn("google")
+                onSignOut()
                 onClose()
               }}
               type="button"
             >
-              Sign in with Google
+              Sign Out
             </Button>
-          )}
+          </>
+        ) : (
+          <Button
+            className="w-full"
+            onClick={() => {
+              onSignInGoogle()
+              onClose()
+            }}
+            type="button"
+          >
+            Sign in with Google
+          </Button>
+        )}
         </div>
       </div>
     </>

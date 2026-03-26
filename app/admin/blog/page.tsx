@@ -20,6 +20,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileEdit, Plus, Trash2, Loader2, Eye } from 'lucide-react';
+import { cmsDeletePost, cmsListAllPosts } from '@/lib/appwrite/cms';
 
 interface Post {
   id: string;
@@ -39,10 +40,21 @@ export default function AdminBlogPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchPosts = () => {
-    fetch('/api/admin/posts')
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data.posts || []);
+    cmsListAllPosts()
+      .then((list) => {
+        setPosts(
+          list.map((p) => ({
+            id: p.id,
+            title: p.title,
+            slug: p.slug,
+            excerpt: p.excerpt,
+            category: p.category,
+            tags: p.tags,
+            published: p.published,
+            publishedAt: p.publishedAt,
+            updatedAt: p.updatedAt,
+          }))
+        );
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -56,13 +68,8 @@ export default function AdminBlogPage() {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/admin/posts/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setPosts((prev) => prev.filter((p) => p.id !== id));
-      } else {
-        const data = await res.json();
-        alert(data.error || 'Failed to delete');
-      }
+      await cmsDeletePost(id);
+      setPosts((prev) => prev.filter((p) => p.id !== id));
     } catch {
       alert('Failed to delete');
     } finally {
@@ -85,7 +92,7 @@ export default function AdminBlogPage() {
           <div>
             <CardTitle>Blog Posts</CardTitle>
             <CardDescription>
-              Add, edit, or remove posts. Content is stored in the database and supports Markdown.
+              Add, edit, or remove posts. Content is stored in Appwrite and supports Markdown.
             </CardDescription>
           </div>
           <Button asChild size="sm">
@@ -149,7 +156,7 @@ export default function AdminBlogPage() {
                           </Button>
                         )}
                         <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/admin/blog/${post.id}/edit`}>
+                          <Link href={`/admin/blog/edit?id=${post.id}`}>
                             <FileEdit className="h-4 w-4" />
                           </Link>
                         </Button>
