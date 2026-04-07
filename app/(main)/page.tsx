@@ -15,7 +15,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-static"
 
 export default async function HomePage() {
-  const posts = await getAllBlogPosts()
+  let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []
+  try {
+    posts = await getAllBlogPosts()
+  } catch (error) {
+    console.error("[blog] HomePage: failed to load posts:", error)
+  }
   return (
     <>
       <OrganizationSchema />

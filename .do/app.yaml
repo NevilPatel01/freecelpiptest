@@ -18,7 +18,7 @@ static_sites:
       deploy_on_push: true
     source_dir: /
     environment_slug: node-js
-    # Install Bun on the build runner, then install deps and build (bun.lock is required in repo).
+    # Install Bun, then build. prebuild must run TS via `bun scripts/...` (not `tsx` — tsx breaks on DO’s Bun with ./cjs/index.cjs).
     build_command: curl -fsSL https://bun.sh/install | bash && export BUN_INSTALL="$HOME/.bun" && export PATH="$BUN_INSTALL/bin:$PATH" && bun install --frozen-lockfile && bun run build
     output_dir: out
     envs:

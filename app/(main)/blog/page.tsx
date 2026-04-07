@@ -12,7 +12,12 @@ export const metadata = {
 }
 
 export default async function BlogPage() {
-  const posts = await getAllBlogPosts()
+  let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []
+  try {
+    posts = await getAllBlogPosts()
+  } catch (error) {
+    console.error("[blog] BlogPage: failed to load posts:", error)
+  }
 
   return (
     <Suspense fallback={<BlogListingSkeleton />}>

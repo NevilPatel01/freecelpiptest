@@ -1,6 +1,6 @@
 /**
- * Load .env.local then .env into process.env for tsx CLI scripts.
- * Next.js loads these automatically; bare `tsx` does not.
+ * Load .env.local then .env into process.env for CLI scripts (bun/node).
+ * Next.js loads these automatically at dev/build time.
  * .env.local wins over .env for each key (same order as typical tooling).
  */
 import { readFileSync, existsSync } from "node:fs"
