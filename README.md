@@ -15,30 +15,30 @@ Users load the app from DigitalOcean (or any static host). The browser talks to 
 
 ## Local development
 
-**Prerequisites:** Node.js 20+ (see `.nvmrc`), an Appwrite Cloud project.
+**Prerequisites:** [Bun](https://bun.sh) 1.2+ (see `packageManager` in `package.json`), **Node.js 20+** (required to run `next build`; Bun installs deps and runs other scripts), and an Appwrite Cloud project.
 
 ```bash
-npm install
+bun install
 cp .env.example .env.local
 ```
 
 Fill `.env.local` using `.env.example` (Appwrite project + database IDs, `NEXT_PUBLIC_SITE_URL`, `APPWRITE_API_KEY`). Provision collections and the blog images bucket:
 
 ```bash
-npm run setup:appwrite
+bun run setup:appwrite
 ```
 
 Copy the printed collection and bucket IDs into `.env.local`, then:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 Static production build locally:
 
 ```bash
-npm run build
-npm run preview:static
+bun run build
+bun run preview:static
 ```
 
 ## Deploy (DigitalOcean App Platform)

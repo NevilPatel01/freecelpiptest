@@ -1,4 +1,4 @@
-# Dev branch: verify production-style standalone build.
+# Dev branch: verify production-style build (Bun).
 name: Build check (dev branch)
 
 on:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: "20.x"
+  BUN_VERSION: "1.2.14"
   DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?schema=public"
   NEXT_PUBLIC_SITE_URL: "https://freecelpiptest.com"
   AUTH_SECRET: "ci-build-placeholder-secret-min-32-chars!!"
@@ -21,13 +21,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
+          bun-version: ${{ env.BUN_VERSION }}
 
-      - run: npm ci
+      - run: bun install --frozen-lockfile
 
-      - run: npx prisma generate
+      - run: bunx prisma generate
 
-      - run: npm run build
+      - run: bun run build

@@ -6,8 +6,14 @@ import { getSiteUrl, DEFAULT_AUTHOR, APP_NAME } from "@/lib/constants"
 export const dynamic = "force-static"
 export const dynamicParams = false
 
-export function generateStaticParams() {
-  return getBlogPostSlugs().map((slug) => ({ slug }))
+export async function generateStaticParams() {
+  try {
+    const slugs = getBlogPostSlugs()
+    return slugs.map((slug) => ({ slug }))
+  } catch (error) {
+    console.error("[blog] generateStaticParams: failed to read blog slugs:", error)
+    return []
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
