@@ -15,12 +15,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-static"
 
 export default async function HomePage() {
-  let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []
-  try {
-    posts = await getAllBlogPosts()
-  } catch {
-    // DB unreachable at build; homepage still renders, FeaturedBlog gets empty list
-  }
+  const posts = await getAllBlogPosts()
   return (
     <>
       <OrganizationSchema />

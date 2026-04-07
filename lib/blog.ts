@@ -80,15 +80,35 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
   }
 }
 
+/**
+ * All posts from `content/blog` (MD/MDX). Safe for static export / CI:
+ * - Missing or empty `content/blog` → []
+ * - One bad file does not fail the whole build; it is skipped and logged.
+ */
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
-  const slugs = getBlogPostSlugs()
-  const posts = await Promise.all(slugs.map((s) => getBlogPostBySlug(s)))
-  return posts
-    .filter((p): p is BlogPost => p !== null)
-    .sort(
-      (a, b) =>
-        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  try {
+    const slugs = getBlogPostSlugs()
+    const settled = await Promise.allSettled(
+      slugs.map((slug) => getBlogPostBySlug(slug)),
     )
+    const posts: BlogPost[] = []
+    for (let i = 0; i < settled.length; i++) {
+      const slug = slugs[i]
+      const r = settled[i]
+      if (r.status === "fulfilled" && r.value) {
+        posts.push(r.value)
+      } else if (r.status === "rejected") {
+        console.error(`[blog] Skipping "${slug}":`, r.reason)
+      }
+    }
+    return posts.sort(
+      (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+    )
+  } catch (e) {
+    console.error("[blog] getAllBlogPosts failed:", e)
+    return []
+  }
 }
 
 export function getBlogPostsByCategory(category: string): Promise<BlogPost[]> {
