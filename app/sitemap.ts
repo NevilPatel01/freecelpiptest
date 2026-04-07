@@ -1,7 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getSiteUrl } from '@/lib/constants'
-import { hasAppwriteBuildCredentials } from '@/lib/appwrite/env'
-import { serverListBlogForSitemap } from '@/lib/appwrite/server'
+import { getAllBlogPosts } from '@/lib/blog'
 
 export const dynamic = 'force-static'
 
@@ -9,18 +8,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl()
 
   let blogUrls: MetadataRoute.Sitemap = []
-  if (hasAppwriteBuildCredentials()) {
-    try {
-      const blogPosts = await serverListBlogForSitemap()
-      blogUrls = blogPosts.map((post) => ({
-        url: `${baseUrl}/blog/${post.slug}`,
-        lastModified: post.updatedAt,
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-      }))
-    } catch {
-      /* build-time Appwrite unreachable */
-    }
+  try {
+    const posts = await getAllBlogPosts()
+    blogUrls = posts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.updatedAt ? new Date(post.updatedAt) : new Date(post.publishedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
+  } catch {
+    /* content dir missing or unreadable at build */
   }
 
   return [

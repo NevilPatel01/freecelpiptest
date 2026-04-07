@@ -26,7 +26,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Download, Loader2, Star } from 'lucide-react';
-import { adminListFeedback, adminUpdateFeedbackStatus } from '@/lib/appwrite/forms';
 
 interface Feedback {
   id: string;
@@ -44,9 +43,10 @@ export default function FeedbackPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    adminListFeedback()
-      .then((list) => {
-        setFeedback(list);
+    fetch('/api/admin/feedback')
+      .then((res) => res.json())
+      .then((data) => {
+        setFeedback(data.feedback || []);
         setLoading(false);
       })
       .catch((err) => {
@@ -57,10 +57,16 @@ export default function FeedbackPage() {
 
   const updateStatus = async (id: string, status: string) => {
     try {
-      await adminUpdateFeedbackStatus(id, status);
-      setFeedback((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, status } : item)),
-      );
+      const res = await fetch('/api/admin/feedback', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status }),
+      });
+      if (res.ok) {
+        setFeedback((prev) =>
+          prev.map((item) => (item.id === id ? { ...item, status } : item)),
+        );
+      }
     } catch (error) {
       console.error('Failed to update status:', error);
     }

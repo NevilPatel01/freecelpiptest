@@ -51,3 +51,5 @@ github-secrets.txt
 
 # Generated before static export (Appwrite slugs at build time)
 content/.blog-slugs-export.json
+
+.env.example

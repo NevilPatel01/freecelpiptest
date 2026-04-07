@@ -1,9 +1,12 @@
-import {
-  getAllPublishedPostsDb,
-  getPublishedPostBySlugDb,
-  markdownToHtml,
-} from "./blog-db"
-import { DEFAULT_AUTHOR } from "./constants"
+import { remark } from "remark"
+import remarkGfm from "remark-gfm"
+import html from "remark-html"
+import fs from "fs"
+import path from "path"
+import matter from "gray-matter"
+import { DEFAULT_AUTHOR } from "@/lib/constants"
+
+const postsDirectory = path.join(process.cwd(), "content/blog")
 
 export interface BlogPost {
   slug: string
@@ -21,74 +24,83 @@ export interface BlogPost {
   updatedAt?: string
 }
 
-function dbPostToBlogPost(
-  post: {
-    slug: string
-    title: string
-    excerpt: string
-    content: string
-    featuredImage: string | null
-    category: string
-    tags: string[]
-    readingTime: number
-    author: string | null
-    publishedAt: Date | null
-    updatedAt: Date
-  },
-  contentHtml: string
-): BlogPost {
-  const img = post.featuredImage ?? undefined
-  return {
-    slug: post.slug,
-    title: post.title,
-    excerpt: post.excerpt,
-    content: contentHtml,
-    category: post.category,
-    tags: post.tags,
-    readingTime: post.readingTime,
-    publishedAt: post.publishedAt?.toISOString() ?? new Date().toISOString(),
-    featuredImage: img,
-    coverImage: img,
-    keywords: post.tags,
-    author: post.author ?? DEFAULT_AUTHOR,
-    updatedAt: post.updatedAt.toISOString(),
-  }
+function getSlugFiles(): string[] {
+  if (!fs.existsSync(postsDirectory)) return []
+  return fs
+    .readdirSync(postsDirectory)
+    .filter(
+      (file) =>
+        (file.endsWith(".md") || file.endsWith(".mdx")) &&
+        !file.toLowerCase().includes("readme")
+    )
 }
 
-export function getBlogPostSlugs(): Promise<string[]> {
-  return getAllPublishedPostsDb().then((posts) => posts.map((p) => p.slug))
+export function getBlogPostSlugs(): string[] {
+  return getSlugFiles().map((file) => file.replace(/\.(md|mdx)$/i, ""))
+}
+
+async function markdownToHtml(markdown: string): Promise<string> {
+  const processed = await remark().use(remarkGfm).use(html).process(markdown)
+  return processed.toString()
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  const post = await getPublishedPostBySlugDb(slug)
-  if (!post) return null
-  const contentHtml = await markdownToHtml(post.content)
-  return dbPostToBlogPost(post, contentHtml)
+  let fullPath = path.join(postsDirectory, `${slug}.mdx`)
+  if (!fs.existsSync(fullPath)) {
+    fullPath = path.join(postsDirectory, `${slug}.md`)
+  }
+  if (!fs.existsSync(fullPath)) return null
+
+  const raw = fs.readFileSync(fullPath, "utf8")
+  const { data, content } = matter(raw)
+  const contentHtml = await markdownToHtml(content)
+  const wordCount = content.split(/\s+/).filter(Boolean).length
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200))
+  const keywords = data.keywords ?? data.tags ?? []
+  const publishedAt = data.publishedAt || data.date || new Date().toISOString()
+  const img = data.coverImage || data.featuredImage
+
+  return {
+    slug,
+    title: data.title || "",
+    excerpt: data.excerpt || "",
+    content: contentHtml,
+    category: data.category || "General",
+    tags: Array.isArray(data.tags) ? data.tags : [],
+    readingTime,
+    publishedAt:
+      typeof publishedAt === "string"
+        ? publishedAt
+        : new Date(publishedAt).toISOString(),
+    featuredImage: img,
+    coverImage: img,
+    keywords: Array.isArray(keywords) ? keywords : [String(keywords)],
+    author: data.author || DEFAULT_AUTHOR,
+    updatedAt: data.updatedAt,
+  }
 }
 
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
-  const posts = await getAllPublishedPostsDb()
-  const withHtml = await Promise.all(
-    posts.map(async (post) => {
-      const contentHtml = await markdownToHtml(post.content)
-      return dbPostToBlogPost(post, contentHtml)
-    })
-  )
-  return withHtml
+  const slugs = getBlogPostSlugs()
+  const posts = await Promise.all(slugs.map((s) => getBlogPostBySlug(s)))
+  return posts
+    .filter((p): p is BlogPost => p !== null)
+    .sort(
+      (a, b) =>
+        new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    )
 }
 
 export function getBlogPostsByCategory(category: string): Promise<BlogPost[]> {
   return getAllBlogPosts().then((posts) =>
-    posts.filter(
-      (post) => post.category.toLowerCase() === category.toLowerCase()
-    )
+    posts.filter((p) => p.category.toLowerCase() === category.toLowerCase())
   )
 }
 
 export function getBlogPostsByTag(tag: string): Promise<BlogPost[]> {
   return getAllBlogPosts().then((posts) =>
-    posts.filter((post) =>
-      post.tags.some((t) => t.toLowerCase() === tag.toLowerCase())
+    posts.filter((p) =>
+      p.tags.some((t) => t.toLowerCase() === tag.toLowerCase())
     )
   )
 }

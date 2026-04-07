@@ -13,7 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { submitFeedback, submitNewsletterEmail } from "@/lib/appwrite/forms"
 
 export function Footer() {
   const [email, setEmail] = useState("")
@@ -38,17 +37,23 @@ export function Footer() {
     setMessage(null)
 
     try {
-      const result = await submitNewsletterEmail(email)
-      if (result.ok) {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      const data = await response.json().catch(() => ({}))
+
+      if (response.ok) {
         setMessage({ type: "success", text: "Successfully subscribed!" })
         setEmail("")
       } else {
         setMessage({
           type: "error",
           text:
-            result.message === "Email already subscribed"
+            data.message === "Email already subscribed"
               ? "You are already on the list."
-              : result.message,
+              : data.message || "Something went wrong. Please try again.",
         })
       }
     } catch {
@@ -64,23 +69,34 @@ export function Footer() {
     setFeedbackMessage(null)
 
     try {
-      const data = await submitFeedback({
-        name: feedbackData.name,
-        email: feedbackData.email,
-        message: feedbackData.message,
-        rating: feedbackData.rating || null,
-        category: feedbackData.category,
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: feedbackData.name,
+          email: feedbackData.email,
+          message: feedbackData.message,
+          rating: feedbackData.rating || null,
+          category: feedbackData.category,
+        }),
       })
+      const data = await response.json().catch(() => ({}))
 
-      if (data.ok) {
-        setFeedbackMessage({ type: "success", text: data.message })
+      if (response.ok) {
+        setFeedbackMessage({
+          type: "success",
+          text: data.message || "Thank you for your feedback!",
+        })
         setFeedbackData({ name: "", email: "", message: "", rating: 0, category: "general" })
         setTimeout(() => {
           setFeedbackOpen(false)
           setFeedbackMessage(null)
         }, 2000)
       } else {
-        setFeedbackMessage({ type: "error", text: data.message })
+        setFeedbackMessage({
+          type: "error",
+          text: data.error || "Something went wrong. Please try again.",
+        })
       }
     } catch {
       setFeedbackMessage({ type: "error", text: "Something went wrong. Please try again." })

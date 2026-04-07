@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
+import { useSession, signIn, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Menu, User, LogOut, Bookmark, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,7 @@ import { MobileMenu } from "./mobile-menu"
 import { ThemeToggle } from "./theme-toggle"
 
 export function Header() {
-  const { user, signOut, signInWithGoogle } = useAppwriteAuth()
+  const { data: session, status } = useSession()
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -52,10 +52,11 @@ export function Header() {
     return pathname?.startsWith(href)
   }
 
+  const user = session?.user ?? null
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
       <nav className="container mx-auto flex h-16 items-center justify-between container-padding" aria-label="Main navigation">
-        {/* Logo */}
         <Link href="/" className="flex items-center space-x-2 flex-shrink-0" aria-label="FreeCELPIPTest Home">
           <img
             src="/assets/logo-bg.png"
@@ -68,60 +69,70 @@ export function Header() {
             decoding="async"
           />
         </Link>
-        
-        {/* Desktop Navigation - Centered */}
+
         <div className="hidden lg:flex items-center gap-1 absolute left-1/2 transform -translate-x-1/2">
-            {navigation.map((item) => (
-              item.submenu ? (
-                <DropdownMenu key={item.name}>
-                  <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      className={`text-sm font-medium h-9 px-4 rounded-lg transition-all duration-200 ${
-                        isActive(item.href)
-                          ? "text-primary bg-primary/10 font-semibold"
-                          : "hover:bg-primary/10 hover:text-primary"
-                      }`}
-                    >
-                      {item.name}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className="w-48">
-                    {item.submenu.map((subItem) => (
-                      <DropdownMenuItem key={subItem.name} asChild>
-                        <Link href={subItem.href} className="cursor-pointer">{subItem.name}</Link>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`text-sm font-medium h-9 px-4 rounded-lg flex items-center transition-all duration-200 ${
-                    isActive(item.href)
-                      ? "text-primary bg-primary/10 font-semibold"
-                      : "text-foreground/70 hover:text-primary hover:bg-primary/10"
-                  }`}
-                  aria-label={`Navigate to ${item.name}`}
-                >
-                  {item.name}
-                </Link>
-              )
-            ))}
+          {navigation.map((item) =>
+            item.submenu ? (
+              <DropdownMenu key={item.name}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={`text-sm font-medium h-9 px-4 rounded-lg transition-all duration-200 ${
+                      isActive(item.href)
+                        ? "text-primary bg-primary/10 font-semibold"
+                        : "hover:bg-primary/10 hover:text-primary"
+                    }`}
+                  >
+                    {item.name}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  {item.submenu.map((subItem) => (
+                    <DropdownMenuItem key={subItem.name} asChild>
+                      <Link href={subItem.href} className="cursor-pointer">
+                        {subItem.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`text-sm font-medium h-9 px-4 rounded-lg flex items-center transition-all duration-200 ${
+                  isActive(item.href)
+                    ? "text-primary bg-primary/10 font-semibold"
+                    : "text-foreground/70 hover:text-primary hover:bg-primary/10"
+                }`}
+                aria-label={`Navigate to ${item.name}`}
+              >
+                {item.name}
+              </Link>
+            )
+          )}
         </div>
 
-        {/* Right side actions */}
-        <div className="flex items-center gap-4 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           <ThemeToggle />
-          
-          {user ? (
+
+          {status === "loading" ? (
+            <div className="h-9 w-9 rounded-full bg-muted animate-pulse hidden sm:block" aria-hidden />
+          ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
-                    {(user.name || user.email || "U").charAt(0).toUpperCase()}
-                  </span>
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name || "User"}
+                      className="h-8 w-8 rounded-full"
+                    />
+                  ) : (
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
+                      {(user.name || user.email || "U").charAt(0).toUpperCase()}
+                    </span>
+                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 z-[100]">
@@ -151,7 +162,7 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    void signOut()
+                    void signOut({ callbackUrl: "/" })
                   }}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
@@ -159,7 +170,16 @@ export function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : null}
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden lg:inline-flex whitespace-nowrap"
+              onClick={() => signIn("google", { callbackUrl: pathname || "/" })}
+            >
+              Sign in
+            </Button>
+          )}
 
           <Button
             variant="ghost"
@@ -182,12 +202,11 @@ export function Header() {
         onClose={() => setMobileMenuOpen(false)}
         navigation={navigation}
         user={user}
-        onSignInGoogle={signInWithGoogle}
+        onSignInGoogle={() => signIn("google", { callbackUrl: pathname || "/" })}
         onSignOut={() => {
-          void signOut()
+          void signOut({ callbackUrl: "/" })
         }}
       />
     </header>
   )
 }
-

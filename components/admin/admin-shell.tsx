@@ -3,34 +3,35 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState, type ReactNode } from "react"
+import { useSession, signIn, signOut } from "next-auth/react"
 import { Home, Mail, MessageSquare, LogOut, FileText, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
-import { userHasAdminAccess } from "@/lib/appwrite/admin-access"
 
 export default function AdminShell({ children }: { children: ReactNode }) {
-  const { user, loading, signInWithGoogle, signOut, refreshUser } = useAppwriteAuth()
+  const { data: session, status } = useSession()
   const router = useRouter()
   const [allowed, setAllowed] = useState<boolean | null>(null)
 
+  const loading = status === "loading"
+
   useEffect(() => {
     if (loading) return
-    if (!user) {
+    if (!session?.user) {
       setAllowed(false)
       return
     }
-    void userHasAdminAccess(user).then(setAllowed)
-  }, [user, loading])
+    setAllowed(session.user.isAdmin === true)
+  }, [session, loading])
 
   useEffect(() => {
     if (loading || allowed === null) return
-    if (!user) return
+    if (!session?.user) return
     if (!allowed) {
       router.replace("/?error=unauthorized")
     }
-  }, [allowed, user, loading, router])
+  }, [allowed, session, loading, router])
 
-  if (loading || (user && allowed === null)) {
+  if (loading || (session?.user && allowed === null)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
@@ -38,11 +39,13 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     )
   }
 
-  if (!user) {
+  if (!session?.user) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4">
         <p className="text-center text-muted-foreground">Sign in to access the admin portal.</p>
-        <Button onClick={() => signInWithGoogle()}>Sign in with Google</Button>
+        <Button onClick={() => signIn("google", { callbackUrl: "/admin" })}>
+          Sign in with Google
+        </Button>
         <Button variant="ghost" asChild>
           <Link href="/">Back to site</Link>
         </Button>
@@ -66,7 +69,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             <div>
               <h1 className="text-2xl font-bold">Admin Portal</h1>
               <p className="text-sm text-muted-foreground">
-                Welcome, {user.name || user.email}
+                Welcome, {session.user.name || session.user.email}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -81,7 +84,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                 size="sm"
                 type="button"
                 onClick={() => {
-                  void signOut().then(() => refreshUser())
+                  void signOut({ callbackUrl: "/" })
                 }}
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -114,7 +117,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
               className="flex items-center gap-2 rounded-lg px-4 py-3 hover:bg-accent"
             >
               <FileText className="h-4 w-4" />
-              Blog Posts
+              Blog content
             </Link>
           </aside>
           <main className="md:col-span-3">{children}</main>

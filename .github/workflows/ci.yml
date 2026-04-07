@@ -1,4 +1,4 @@
-# Lint, typecheck, and static export on every push/PR (no Docker, no Azure).
+# Lint, typecheck, and production build (standalone output for Node / Docker / AKS).
 name: CI
 
 on:
@@ -9,6 +9,8 @@ on:
 
 env:
   NODE_VERSION: "20.x"
+  # Prisma validate/generate; no live DB required for `next build`
+  DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?schema=public"
 
 jobs:
   verify:
@@ -23,9 +25,16 @@ jobs:
 
       - run: npm ci
 
+      - run: npx prisma generate
+
       - run: npm run lint
 
       - run: npx tsc --noEmit
 
-      - name: Static build (no Appwrite secrets required)
+      - name: Build (standalone)
+        env:
+          AUTH_SECRET: "ci-build-placeholder-secret-min-32-chars!!"
+          NEXTAUTH_SECRET: "ci-build-placeholder-secret-min-32-chars!!"
+          GOOGLE_CLIENT_ID: "ci-placeholder.apps.googleusercontent.com"
+          GOOGLE_CLIENT_SECRET: "ci-placeholder"
         run: npm run build

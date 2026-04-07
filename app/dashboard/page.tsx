@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
+import { useSession } from "next-auth/react"
 import { Bookmark, Bell, Settings, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -10,16 +10,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { user, loading } = useAppwriteAuth()
+  const { data: session, status } = useSession()
   const [activeTab, setActiveTab] = useState("overview")
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (status === "unauthenticated") {
       router.replace("/")
     }
-  }, [loading, user, router])
+  }, [status, router])
 
-  if (loading) {
+  if (status === "loading") {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="animate-pulse space-y-4">
@@ -30,7 +30,7 @@ export default function DashboardPage() {
     )
   }
 
-  if (!user) {
+  if (!session?.user) {
     return null
   }
 
@@ -39,7 +39,7 @@ export default function DashboardPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {user.name || user.email || "User"}!
+          Welcome back, {session.user.name || "User"}!
         </p>
       </div>
 
@@ -186,4 +186,3 @@ export default function DashboardPage() {
     </div>
   )
 }
-

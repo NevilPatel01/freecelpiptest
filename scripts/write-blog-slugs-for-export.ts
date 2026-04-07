@@ -1,16 +1,16 @@
 /**
- * Writes content/.blog-slugs-export.json for static export (prebuild).
- * Slugs come from Appwrite when APPWRITE_API_KEY + public Appwrite env are set; otherwise [].
+ * Writes content/.blog-slugs-export.json for tooling / legacy consumers.
+ * Slugs are derived from files in content/blog.
  */
 import fs from "fs"
 import path from "path"
-import { listPublishedBlogSlugsForStaticExport } from "../lib/appwrite/build-blog-slugs"
+import { getBlogPostSlugs } from "../lib/blog"
 import { loadEnvFiles } from "./load-env"
 
 loadEnvFiles()
 
-async function main() {
-  const slugs = await listPublishedBlogSlugsForStaticExport()
+function main() {
+  const slugs = getBlogPostSlugs()
   const outDir = path.join(process.cwd(), "content")
   const outFile = path.join(outDir, ".blog-slugs-export.json")
   if (!fs.existsSync(outDir)) {
@@ -20,7 +20,4 @@ async function main() {
   console.log(`Wrote ${slugs.length} blog slug(s) to content/.blog-slugs-export.json`)
 }
 
-main().catch((e) => {
-  console.error(e)
-  process.exit(1)
-})
+main()

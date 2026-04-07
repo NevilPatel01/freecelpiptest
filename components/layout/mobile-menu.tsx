@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import type { Models } from "appwrite"
 import { usePathname } from "next/navigation"
 import { X, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -16,7 +15,11 @@ interface MobileMenuProps {
     href: string
     submenu?: Array<{ name: string; href: string }>
   }>
-  user: Models.User | null
+  user: {
+    name?: string | null
+    email?: string | null
+    image?: string | null
+  } | null
   onSignInGoogle: () => void
   onSignOut: () => void
 }
