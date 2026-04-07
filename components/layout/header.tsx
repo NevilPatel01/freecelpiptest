@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useSession, signIn, signOut } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Menu, User, LogOut, Bookmark, Settings } from "lucide-react"
@@ -15,9 +14,27 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MobileMenu } from "./mobile-menu"
 import { ThemeToggle } from "./theme-toggle"
+import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
+import type { AppwriteUser } from "@/components/providers/appwrite-auth-provider"
+
+function menuUserFromAppwrite(user: AppwriteUser | null) {
+  if (!user) return null
+  const picture =
+    user.prefs &&
+    typeof user.prefs === "object" &&
+    "picture" in user.prefs &&
+    typeof (user.prefs as Record<string, unknown>).picture === "string"
+      ? String((user.prefs as Record<string, string>).picture)
+      : null
+  return {
+    name: user.name ?? null,
+    email: user.email ?? null,
+    image: picture,
+  }
+}
 
 export function Header() {
-  const { data: session, status } = useSession()
+  const { user: appwriteUser, status, signInGoogle, signOut } = useAppwriteAuth()
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -52,7 +69,7 @@ export function Header() {
     return pathname?.startsWith(href)
   }
 
-  const user = session?.user ?? null
+  const user = menuUserFromAppwrite(appwriteUser)
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
@@ -162,7 +179,7 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    void signOut({ callbackUrl: "/" })
+                    void signOut()
                   }}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
@@ -175,7 +192,7 @@ export function Header() {
               variant="outline"
               size="sm"
               className="hidden lg:inline-flex whitespace-nowrap"
-              onClick={() => signIn("google", { callbackUrl: pathname || "/" })}
+              onClick={() => signInGoogle(pathname || "/")}
             >
               Sign in
             </Button>
@@ -202,9 +219,9 @@ export function Header() {
         onClose={() => setMobileMenuOpen(false)}
         navigation={navigation}
         user={user}
-        onSignInGoogle={() => signIn("google", { callbackUrl: pathname || "/" })}
+        onSignInGoogle={() => signInGoogle(pathname || "/")}
         onSignOut={() => {
-          void signOut({ callbackUrl: "/" })
+          void signOut()
         }}
       />
     </header>

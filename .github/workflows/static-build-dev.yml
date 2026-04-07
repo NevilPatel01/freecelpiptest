@@ -1,4 +1,4 @@
-# Dev branch: verify production-style build (Bun).
+# Dev branch: verify static export build (Bun).
 name: Build check (dev branch)
 
 on:
@@ -8,12 +8,13 @@ on:
 
 env:
   BUN_VERSION: "1.2.14"
-  DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci?schema=public"
   NEXT_PUBLIC_SITE_URL: "https://freecelpiptest.com"
-  AUTH_SECRET: "ci-build-placeholder-secret-min-32-chars!!"
-  NEXTAUTH_SECRET: "ci-build-placeholder-secret-min-32-chars!!"
-  GOOGLE_CLIENT_ID: "ci-placeholder.apps.googleusercontent.com"
-  GOOGLE_CLIENT_SECRET: "ci-placeholder"
+  NEXT_PUBLIC_APPWRITE_ENDPOINT: "https://cloud.appwrite.io/v1"
+  NEXT_PUBLIC_APPWRITE_PROJECT_ID: "ci-placeholder"
+  NEXT_PUBLIC_APPWRITE_DATABASE_ID: "ci-db"
+  NEXT_PUBLIC_APPWRITE_NEWSLETTER_COLLECTION_ID: "newsletter"
+  NEXT_PUBLIC_APPWRITE_FEEDBACK_COLLECTION_ID: "feedback"
+  NEXT_PUBLIC_ADMIN_EMAIL: "admin@example.com"
 
 jobs:
   build:
@@ -26,7 +27,5 @@ jobs:
           bun-version: ${{ env.BUN_VERSION }}
 
       - run: bun install --frozen-lockfile
-
-      - run: bunx prisma generate
 
       - run: bun run build

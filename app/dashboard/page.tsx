@@ -2,15 +2,15 @@
 
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
 import { Bookmark, Bell, Settings, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { user, status } = useAppwriteAuth()
   const [activeTab, setActiveTab] = useState("overview")
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function DashboardPage() {
     )
   }
 
-  if (!session?.user) {
+  if (!user) {
     return null
   }
 
@@ -39,7 +39,7 @@ export default function DashboardPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {session.user.name || "User"}!
+          Welcome back, {user.name || "User"}!
         </p>
       </div>
 

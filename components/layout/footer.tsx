@@ -13,6 +13,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  formsCollectionsReady,
+  subscribeNewsletterEmail,
+  submitFeedback,
+} from "@/lib/appwrite-forms"
 
 export function Footer() {
   const [email, setEmail] = useState("")
@@ -37,24 +42,19 @@ export function Footer() {
     setMessage(null)
 
     try {
-      const response = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      })
-      const data = await response.json().catch(() => ({}))
-
-      if (response.ok) {
+      if (!formsCollectionsReady()) {
+        setMessage({
+          type: "error",
+          text: "Newsletter signup is not configured yet.",
+        })
+        return
+      }
+      const result = await subscribeNewsletterEmail(email)
+      if (result.ok) {
         setMessage({ type: "success", text: "Successfully subscribed!" })
         setEmail("")
       } else {
-        setMessage({
-          type: "error",
-          text:
-            data.message === "Email already subscribed"
-              ? "You are already on the list."
-              : data.message || "Something went wrong. Please try again.",
-        })
+        setMessage({ type: "error", text: result.message })
       }
     } catch {
       setMessage({ type: "error", text: "Something went wrong. Please try again." })
@@ -69,23 +69,25 @@ export function Footer() {
     setFeedbackMessage(null)
 
     try {
-      const response = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: feedbackData.name,
-          email: feedbackData.email,
-          message: feedbackData.message,
-          rating: feedbackData.rating || null,
-          category: feedbackData.category,
-        }),
+      if (!formsCollectionsReady()) {
+        setFeedbackMessage({
+          type: "error",
+          text: "Feedback is not configured yet.",
+        })
+        return
+      }
+      const result = await submitFeedback({
+        name: feedbackData.name,
+        email: feedbackData.email,
+        message: feedbackData.message,
+        rating: feedbackData.rating,
+        category: feedbackData.category,
       })
-      const data = await response.json().catch(() => ({}))
 
-      if (response.ok) {
+      if (result.ok) {
         setFeedbackMessage({
           type: "success",
-          text: data.message || "Thank you for your feedback!",
+          text: result.message,
         })
         setFeedbackData({ name: "", email: "", message: "", rating: 0, category: "general" })
         setTimeout(() => {
@@ -95,7 +97,7 @@ export function Footer() {
       } else {
         setFeedbackMessage({
           type: "error",
-          text: data.error || "Something went wrong. Please try again.",
+          text: result.message,
         })
       }
     } catch {

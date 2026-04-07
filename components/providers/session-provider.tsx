@@ -1,11 +1,3 @@
 "use client"
 
-import { SessionProvider as NextAuthSessionProvider } from "next-auth/react"
-
-export function SessionProvider({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
-}
+export { AppwriteAuthProvider as SessionProvider } from "@/components/providers/appwrite-auth-provider"

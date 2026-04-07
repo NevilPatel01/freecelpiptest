@@ -2,36 +2,29 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useState, type ReactNode } from "react"
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useEffect, type ReactNode } from "react"
 import { Home, Mail, MessageSquare, LogOut, FileText, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
+import { adminEmailsConfigured } from "@/lib/admin-email"
 
 export default function AdminShell({ children }: { children: ReactNode }) {
-  const { data: session, status } = useSession()
+  const { user, status, isAdmin, signInGoogle, signOut } = useAppwriteAuth()
   const router = useRouter()
-  const [allowed, setAllowed] = useState<boolean | null>(null)
-
   const loading = status === "loading"
 
   useEffect(() => {
-    if (loading) return
-    if (!session?.user) {
-      setAllowed(false)
+    if (loading || !user) return
+    if (!adminEmailsConfigured()) {
+      router.replace("/?error=configuration")
       return
     }
-    setAllowed(session.user.isAdmin === true)
-  }, [session, loading])
-
-  useEffect(() => {
-    if (loading || allowed === null) return
-    if (!session?.user) return
-    if (!allowed) {
+    if (!isAdmin) {
       router.replace("/?error=unauthorized")
     }
-  }, [allowed, session, loading, router])
+  }, [user, isAdmin, loading, router])
 
-  if (loading || (session?.user && allowed === null)) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
@@ -39,11 +32,26 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     )
   }
 
-  if (!session?.user) {
+  if (!adminEmailsConfigured()) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4">
+        <p className="text-center text-muted-foreground max-w-md">
+          Admin email allowlist is not configured. Set{" "}
+          <code className="rounded bg-muted px-1 text-xs">NEXT_PUBLIC_ADMIN_EMAIL</code> (or{" "}
+          <code className="rounded bg-muted px-1 text-xs">ADMIN_EMAIL</code>) in the environment.
+        </p>
+        <Button variant="ghost" asChild>
+          <Link href="/">Back to site</Link>
+        </Button>
+      </div>
+    )
+  }
+
+  if (!user) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4">
         <p className="text-center text-muted-foreground">Sign in to access the admin portal.</p>
-        <Button onClick={() => signIn("google", { callbackUrl: "/admin" })}>
+        <Button type="button" onClick={() => signInGoogle("/admin")}>
           Sign in with Google
         </Button>
         <Button variant="ghost" asChild>
@@ -53,7 +61,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     )
   }
 
-  if (!allowed) {
+  if (!isAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
@@ -69,7 +77,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             <div>
               <h1 className="text-2xl font-bold">Admin Portal</h1>
               <p className="text-sm text-muted-foreground">
-                Welcome, {session.user.name || session.user.email}
+                Welcome, {user.name || user.email}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -84,7 +92,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                 size="sm"
                 type="button"
                 onClick={() => {
-                  void signOut({ callbackUrl: "/" })
+                  void signOut()
                 }}
               >
                 <LogOut className="mr-2 h-4 w-4" />
