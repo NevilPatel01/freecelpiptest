@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, type ReactNode } from "react"
+import { useLayoutEffect, type ReactNode } from "react"
 import { Home, Mail, MessageSquare, LogOut, FileText, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAppwriteAuth } from "@/components/providers/appwrite-auth-provider"
@@ -13,7 +13,8 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const router = useRouter()
   const loading = status === "loading"
 
-  useEffect(() => {
+  /** Run before paint to avoid flashing admin chrome for non-admins. Real enforcement is Appwrite collection permissions. */
+  useLayoutEffect(() => {
     if (loading || !user) return
     if (!adminEmailsConfigured()) {
       router.replace("/?error=configuration")

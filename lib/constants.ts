@@ -27,6 +27,16 @@ export function getSiteUrl(): string {
 }
 
 /**
+ * Absolute URL with trailing slashes on paths (matches `trailingSlash: true` in next.config).
+ */
+export function absoluteSitePath(path: string): string {
+  const base = getSiteUrl().replace(/\/$/, "")
+  const p = path.startsWith("/") ? path : `/${path}`
+  if (p === "/") return `${base}/`
+  return `${base}${p.endsWith("/") ? p : `${p}/`}`
+}
+
+/**
  * Contact email shown on contact page. Set NEXT_PUBLIC_CONTACT_EMAIL in .env
  * or it is derived from the site URL host (e.g. contact@yourdomain.com).
  */

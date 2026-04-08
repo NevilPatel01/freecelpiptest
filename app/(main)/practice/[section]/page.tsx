@@ -69,6 +69,7 @@ export default async function PracticeSectionPage({ params }: { params: Promise<
   const { section: sectionParam } = await params
   const section = sectionParam.toLowerCase()
 
+  // Only `generateStaticParams` segments exist in export (`dynamicParams: false`); any other path 404s at runtime.
   if (!validSections.includes(section)) {
     notFound()
   }

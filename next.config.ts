@@ -2,6 +2,8 @@ import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   output: "export",
+  // DigitalOcean (and many static hosts) serve /path as path/index.html, not path.html
+  trailingSlash: true,
 
   images: {
     unoptimized: true,

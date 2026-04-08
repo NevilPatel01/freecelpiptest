@@ -12,6 +12,7 @@ export const metadata = {
 }
 
 export default async function BlogPage() {
+  // `try` only guards the listing payload; the route HTML is still emitted at build (may be empty list).
   let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []
   try {
     posts = await getAllBlogPosts()

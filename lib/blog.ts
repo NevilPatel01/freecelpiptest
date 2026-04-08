@@ -35,6 +35,7 @@ function getSlugFiles(): string[] {
     )
 }
 
+/** Synchronous: uses `fs.readdirSync` only — safe to call from `generateStaticParams` without `await`. */
 export function getBlogPostSlugs(): string[] {
   return getSlugFiles().map((file) => file.replace(/\.(md|mdx)$/i, ""))
 }

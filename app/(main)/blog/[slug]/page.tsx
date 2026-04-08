@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation"
 import { getBlogPostBySlug, getAllBlogPosts, getBlogPostSlugs } from "@/lib/blog"
 import { BlogPostView } from "@/components/blog/blog-post-view"
-import { getSiteUrl, DEFAULT_AUTHOR, APP_NAME } from "@/lib/constants"
+import { absoluteSitePath, DEFAULT_AUTHOR, APP_NAME } from "@/lib/constants"
 
 export const dynamic = "force-static"
 export const dynamicParams = false
 
 export async function generateStaticParams() {
   try {
+    // Sync API (fs); do not await — see `getBlogPostSlugs` in `lib/blog.ts`
     const slugs = getBlogPostSlugs()
     return slugs.map((slug) => ({ slug }))
   } catch (error) {
@@ -27,8 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const keywords = post.keywords || post.tags || []
-  const siteUrl = getSiteUrl()
-  const coverImage = post.coverImage || post.featuredImage || `${siteUrl}/images/blog/default-cover.jpg`
+  const origin = absoluteSitePath("/").replace(/\/$/, "")
+  const coverImage =
+    post.coverImage || post.featuredImage || `${origin}/images/blog/default-cover.jpg`
 
   return {
     title: `${post.title} | ${APP_NAME} Blog`,
@@ -45,23 +47,29 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       tags: keywords,
       images: [
         {
-          url: coverImage.startsWith('http') ? coverImage : `${siteUrl}${coverImage}`,
+          url: coverImage.startsWith("http")
+            ? coverImage
+            : `${origin}${coverImage.startsWith("/") ? coverImage : `/${coverImage}`}`,
           width: 1200,
           height: 630,
           alt: post.title,
         },
       ],
       siteName: APP_NAME,
-      url: `${siteUrl}/blog/${post.slug}`,
+      url: absoluteSitePath(`/blog/${post.slug}`),
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
-      images: [coverImage.startsWith('http') ? coverImage : `${siteUrl}${coverImage}`],
+      images: [
+        coverImage.startsWith("http")
+          ? coverImage
+          : `${origin}${coverImage.startsWith("/") ? coverImage : `/${coverImage}`}`,
+      ],
     },
     alternates: {
-      canonical: `${siteUrl}/blog/${post.slug}`,
+      canonical: absoluteSitePath(`/blog/${post.slug}`),
     },
     robots: {
       index: true,

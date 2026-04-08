@@ -86,6 +86,7 @@ export type NewsletterRow = {
   subscribedAt: string
 }
 
+/** Requires Appwrite permission: read allowed only for admins (or team), not for guests. */
 export async function listNewsletterSubscribers(): Promise<NewsletterRow[]> {
   const databaseId = getAppwriteDatabaseId()
   const collectionId = getNewsletterCollectionId()
@@ -113,6 +114,7 @@ export type FeedbackRow = {
   status: string
 }
 
+/** Requires Appwrite permission: read/update for admins only (guest create allowed if desired). */
 export async function listFeedback(): Promise<FeedbackRow[]> {
   const databaseId = getAppwriteDatabaseId()
   const collectionId = getFeedbackCollectionId()

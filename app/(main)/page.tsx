@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-static"
 
 export default async function HomePage() {
+  // force-static: featured posts are whatever `content/blog` resolves at build; redeploy to refresh.
   let posts: Awaited<ReturnType<typeof getAllBlogPosts>> = []
   try {
     posts = await getAllBlogPosts()
