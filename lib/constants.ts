@@ -27,13 +27,14 @@ export function getSiteUrl(): string {
 }
 
 /**
- * Absolute URL with trailing slashes on paths (matches `trailingSlash: true` in next.config).
+ * Absolute URL (no trailing slash on paths except `/`, matches `trailingSlash: false` in next.config).
  */
 export function absoluteSitePath(path: string): string {
   const base = getSiteUrl().replace(/\/$/, "")
   const p = path.startsWith("/") ? path : `/${path}`
-  if (p === "/") return `${base}/`
-  return `${base}${p.endsWith("/") ? p : `${p}/`}`
+  if (p === "/" || p === "") return `${base}/`
+  const normalized = p.replace(/\/+$/, "")
+  return `${base}${normalized}`
 }
 
 /**

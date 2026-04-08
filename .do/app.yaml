@@ -1,4 +1,5 @@
 # DigitalOcean App Platform — static site (Next.js output: export → out/)
+# Routes are emitted as out/blog.html (clean URLs) plus out/blog/index.html after postbuild for hosts that only map /blog/ to a directory index.
 # Docs: https://docs.digitalocean.com/products/app-platform/how-to/manage-in-app-spec/
 #
 # Before first deploy:
