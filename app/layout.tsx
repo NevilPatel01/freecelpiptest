@@ -18,6 +18,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
+  applicationName: APP_NAME,
   title: {
     default: `${APP_NAME} - CELPIP Practice Tests & Expert Tips`,
     template: `%s | ${APP_NAME}`,
@@ -27,6 +28,14 @@ export const metadata: Metadata = {
   authors: [{ name: APP_NAME }],
   creator: APP_NAME,
   publisher: APP_NAME,
+  category: "education",
+  classification: "Education, Language Learning, Test Preparation",
+  referrer: "origin-when-cross-origin",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: [
       { url: "/favicon.png", sizes: "any", type: "image/png" },
@@ -73,6 +82,11 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: getSiteUrl(),
+  },
+  appleWebApp: {
+    capable: true,
+    title: APP_NAME,
+    statusBarStyle: "default",
   },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION || undefined,

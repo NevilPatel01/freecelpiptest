@@ -8,6 +8,18 @@ export function WebsiteSchema() {
     name: APP_NAME,
     url: siteUrl,
     description: "Comprehensive CELPIP test preparation platform with practice tests, study guides, and expert tips for all 4 test sections to help you achieve your target score.",
+    inLanguage: "en-CA",
+    audience: {
+      "@type": "Audience",
+      audienceType: "CELPIP test takers, immigrants, international students",
+    },
+    about: [
+      "CELPIP Listening",
+      "CELPIP Reading",
+      "CELPIP Writing",
+      "CELPIP Speaking",
+      "Canadian Language Benchmark (CLB)",
+    ],
     publisher: {
       "@type": "Organization",
       name: APP_NAME,

@@ -14,7 +14,7 @@ region: tor
 static_sites:
   - name: web
     github:
-      repo: YOUR_GITHUB_ORG/YOUR_REPO
+      repo: NevilPatel01/freecelpiptest
       branch: dev
       deploy_on_push: true
     source_dir: /

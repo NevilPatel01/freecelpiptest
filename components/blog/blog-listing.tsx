@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, Tag, X } from "lucide-react"
@@ -22,9 +23,22 @@ const categories = [
 ]
 
 export function BlogListing({ posts }: BlogListingProps) {
+  const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+
+  // Deep links for search engines / JSON-LD SearchAction: /blog?q=...
+  useEffect(() => {
+    const raw = searchParams.get("q") ?? searchParams.get("search") ?? ""
+    const trimmed = raw.trim()
+    if (!trimmed) return
+    try {
+      setSearchQuery(decodeURIComponent(trimmed))
+    } catch {
+      setSearchQuery(trimmed)
+    }
+  }, [searchParams])
 
   // Get all unique tags
   const allTags = useMemo(() => {

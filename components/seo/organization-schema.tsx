@@ -9,8 +9,17 @@ export function OrganizationSchema() {
     url: siteUrl,
     logo: `${siteUrl}/assets/logo-bg.png`,
     description: "Comprehensive CELPIP test preparation platform with practice tests, study guides, and expert tips for all 4 test sections to help you achieve your target score.",
+    knowsAbout: [
+      "CELPIP test preparation",
+      "CELPIP Listening",
+      "CELPIP Reading",
+      "CELPIP Writing",
+      "CELPIP Speaking",
+      "CLB scoring",
+      "Canadian immigration language requirements",
+    ],
     sameAs: [
-      // Add social media links if available
+      // Add social media profile URLs when available (helps search + knowledge panels)
     ],
     contactPoint: {
       "@type": "ContactPoint",
